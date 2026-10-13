@@ -1,0 +1,103 @@
+[
+  {
+    "id": "ALG001",
+    "document_name": "Algebraic Identities.pdf",
+    "question": "If x + y = 12 and xy = 32, find the value of x^2 + y^2.",
+    "expected_answer": "80",
+    "relevant_chunk_ids": [
+      "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_0"
+    ],
+    "document_filename": "Algebraic Identities.pdf"
+  },
+  {
+    "id": "ALG002",
+    "document_name": "Algebraic Identities.pdf",
+    "question": "If a + b + c = 9 and ab + bc + ca = 40, find a^2 + b^2 + c^2.",
+    "expected_answer": "1",
+    "relevant_chunk_ids": [
+      "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_3"
+    ],
+    "document_filename": "Algebraic Identities.pdf"
+  },
+  {
+    "id": "ALG003",
+    "document_name": "Algebraic Identities.pdf",
+    "question": "If x + y = 12 and xy = 27, find x^3 + y^3.",
+    "expected_answer": "756",
+    "relevant_chunk_ids": [
+      "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_4"
+    ],
+    "document_filename": "Algebraic Identities.pdf"
+  },
+  {
+    "id": "ALG004",
+    "document_name": "Algebraic Identities.pdf",
+    "question": "If a + b = 10 and ab = 21, find a^3 + b^3.",
+    "expected_answer": "370",
+    "relevant_chunk_ids": [
+      "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_5"
+    ],
+    "document_filename": "Algebraic Identities.pdf"
+  },
+  {
+    "id": "ALG005",
+    "question": "Simplify the product (x^3 + 1)(x^6 - x^3 + 1).",
+    "expected_answer": "x^9 + 1",
+    "document_filename": "Algebraic Identities.pdf",
+    "relevant_chunk_ids": [
+      "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_6"
+    ],
+    "document_name": "Algebraic Identities.pdf"
+  },
+  {
+    "id": "RES001",
+    "document_name": "Resume 1.pdf",
+    "question": "Which programming languages are listed in the resume?",
+    "expected_answer": "C, C++, Python, and Java.",
+    "relevant_chunk_ids": [
+      "5eef3dfe-5876-4953-8688-091ced07d933_chunk_1"
+    ],
+    "document_filename": "Resume 1.pdf"
+  },
+  {
+    "id": "RES002",
+    "document_name": "Resume 1.pdf",
+    "question": "What AI-related project experience is described in the resume?",
+    "expected_answer": "Developed an AI-based resume analyzer using NLP to extract skills and match with job roles, with a scoring system for personalized resume improvement suggestions.",
+    "relevant_chunk_ids": [
+      "5eef3dfe-5876-4953-8688-091ced07d933_chunk_0"
+    ],
+    "document_filename": "Resume 1.pdf"
+  },
+  {
+    "id": "RES003",
+    "document_name": "Resume 1.pdf",
+    "question": "Which university is mentioned in the education section?",
+    "expected_answer": "MIT-ADT University, Pune.",
+    "relevant_chunk_ids": [
+      "5eef3dfe-5876-4953-8688-091ced07d933_chunk_1"
+    ],
+    "document_filename": "Resume 1.pdf"
+  },
+  {
+    "id": "RES004",
+    "document_name": "Resume 1.pdf",
+    "question": "Which tools and platforms are listed in the resume?",
+    "expected_answer": "Google Colab, Python, Pandas, NumPy, TensorFlow, VS Code, and Figma.",
+    "relevant_chunk_ids": [
+      "5eef3dfe-5876-4953-8688-091ced07d933_chunk_1"
+    ],
+    "document_filename": "Resume 1.pdf"
+  },
+ 
+{
+  "id": "RES005",
+  "document_name": "Resume 1.pdf",
+  "document_filename": "Resume 1.pdf",
+  "question": "What hackathon experience is mentioned in the resume?",
+  "expected_answer": "Participated in a team-based hackathon to develop real-world AI solutions within limited timeframes, contributing to ideation, design, and rapid development of a functional prototype.",
+  "relevant_chunk_ids": [
+    "5eef3dfe-5876-4953-8688-091ced07d933_chunk_1"
+  ]
+}
+]

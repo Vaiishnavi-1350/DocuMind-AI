@@ -1,0 +1,79 @@
+# ==============================
+# Python
+# ==============================
+
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+
+# ==============================
+# Virtual Environment
+# ==============================
+venv/
+.venv/
+env/
+ENV/
+
+# ==============================
+# Environment / Secrets
+# ==============================
+
+.env
+.env.*
+!.env.example
+
+# ==============================
+# Database
+# ==============================
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+
+# ==============================
+# Uploaded files
+# ==============================
+
+data/uploads/
+
+# ==============================
+# Qdrant local storage
+# ==============================
+
+qdrant_storage/
+qdrant_data/
+
+# ==============================
+# Logs
+# ==============================
+
+*.log
+logs/
+
+# ==============================
+# IDE
+# ==============================
+
+.vscode/
+.idea/
+
+# ==============================
+# Temporary files
+# ==============================
+
+*.tmp
+*.temp
+*.bak
+
+# Local databases and uploaded documents
+data/*.db
+data/*.sqlite3
+data/**/*.db
+data/**/*.sqlite3
+data/**/*.bin
+data/**/*.pdf
+
+# Local evaluation reports and saved results
+app/evaluation/reports/*.json
+app/evaluation/documind_saved_history.json

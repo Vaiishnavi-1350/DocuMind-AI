@@ -1,0 +1,2450 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>DocuMind AI</title>
+
+    <link
+        rel="stylesheet"
+        href="/static/style.css"
+    >
+    <link
+    rel="preconnect"
+    href="https://fonts.googleapis.com"
+    >
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+</head>
+<body>
+<!-- =========================================
+     LANDING PAGE
+========================================= -->
+
+<div id="landingScreen" class="landing-screen">
+
+    <!-- TOP NAVIGATION -->
+
+    <header class="landing-nav">
+
+        <a href="#landingHome" class="landing-brand">
+
+            <div class="landing-logo">
+                D
+            </div>
+
+            <div class="landing-brand-text">
+                <strong>DocuMind AI</strong>
+                <span>Document Intelligence</span>
+            </div>
+            </a>
+        <nav class="landing-nav-links">
+
+            <a href="#landingHome">
+                Home
+            </a>
+
+            <a href="#landingFeatures">
+                Features
+            </a>
+
+            <a href="#landingHowItWorks">
+                How it works
+            </a>
+
+            <a href="#landingSecurity">
+                Security
+            </a>
+
+        </nav>
+        <div class="landing-nav-actions">
+
+            <button
+                type="button"
+                class="landing-signin-button"
+                id="landingSignInButton"
+            >
+                Sign In
+            </button>
+
+            <button
+                type="button"
+                class="landing-primary-button"
+                id="landingCreateAccountButton"
+            >
+                Create Account
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- HERO -->
+
+    <main class="landing-main">
+
+        <section class="landing-hero" id="landingHome">
+
+            <div class="landing-hero-content">
+
+                <span class="landing-eyebrow">
+                    AI-POWERED DOCUMENT WORKSPACE
+                </span>
+
+                <h1>
+                    Your documents.
+                    <span>One intelligent workspace.</span>
+                </h1>
+
+                <p>
+                    Upload your documents, ask questions in natural language,
+                    and get intelligent answers grounded in your content.
+                    DocuMind AI turns complex documents into actionable knowledge.
+                </p>
+
+
+                <div class="landing-hero-actions">
+
+                    <button
+                        type="button"
+                        class="landing-primary-button landing-hero-button"
+                        id="landingHeroCreateButton"
+                    >
+                        Create Account
+                        <span>→</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="landing-secondary-button"
+                        id="landingHeroSignInButton"
+                    >
+                        Sign In
+                    </button>
+
+                </div>
+
+
+                <div class="landing-trust-row">
+
+                    <span>✓ Secure workspace</span>
+                    <span>✓ AI document search</span>
+                    <span>✓ Source-aware answers</span>
+
+                </div>
+
+            </div>
+
+
+            <!-- HERO PRODUCT PREVIEW -->
+
+            <div class="landing-preview">
+
+                <div class="landing-preview-window">
+
+                    <div class="landing-preview-topbar">
+
+                        <div class="landing-preview-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+
+                        <span>
+                            DocuMind AI
+                        </span>
+
+                    </div>
+
+
+                    <div class="landing-preview-body">
+
+                        <div class="landing-preview-sidebar">
+
+                            <div class="landing-preview-sidebar-logo">
+                                D
+                            </div>
+
+                            <div class="landing-preview-sidebar-line active"></div>
+                            <div class="landing-preview-sidebar-line"></div>
+                            <div class="landing-preview-sidebar-line"></div>
+                            <div class="landing-preview-sidebar-line"></div>
+
+                        </div>
+
+
+                        <div class="landing-preview-content">
+
+                            <div class="landing-preview-label">
+                                AI ASSISTANT
+                            </div>
+
+                            <h3>
+                                Ask anything about your document
+                            </h3>
+
+                            <div class="landing-preview-document">
+
+                                <div class="landing-document-icon">
+                                    PDF
+                                </div>
+
+                                <div>
+                                    <strong>
+                                        Research_Report.pdf
+                                    </strong>
+
+                                    <span>
+                                        Document ready
+                                    </span>
+                                </div>
+
+                            </div>
+
+
+                            <div class="landing-ai-message">
+
+                                <div class="landing-ai-avatar">
+                                    ✦
+                                </div>
+
+                                <div>
+
+                                    <strong>
+                                        DocuMind AI
+                                    </strong>
+
+                                    <p>
+                                        Ask questions about your document
+                                        and receive contextual answers
+                                        with relevant sources.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="landing-preview-input">
+                                <span>
+                                    Ask your document...
+                                </span>
+
+                                <button type="button">
+                                    →
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- VALUE PROPOSITION -->
+
+        <section
+            class="landing-section"
+            id="landingFeatures"
+        >
+
+            <div class="landing-section-heading">
+
+                <span class="landing-eyebrow">
+                    EVERYTHING IN ONE PLACE
+                </span>
+
+                <h2>
+                    Turn documents into knowledge
+                </h2>
+
+                <p>
+                    Everything you need to understand, search and work
+                    with your documents faster.
+                </p>
+
+            </div>
+
+
+            <div class="landing-feature-grid">
+
+                <article class="landing-feature-card">
+
+                    <div class="landing-feature-icon">
+                        ✦
+                    </div>
+
+                    <h3>
+                        Intelligent Document AI
+                    </h3>
+
+                    <p>
+                        Upload PDFs and let DocuMind AI understand
+                        their content for intelligent question answering.
+                    </p>
+
+                </article>
+
+
+                <article class="landing-feature-card">
+
+                    <div class="landing-feature-icon">
+                        ◇
+                    </div>
+
+                    <h3>
+                        Smart Retrieval
+                    </h3>
+
+                    <p>
+                        Find the most relevant information from your
+                        documents instead of manually searching page by page.
+                    </p>
+
+                </article>
+
+
+                <article class="landing-feature-card">
+
+                    <div class="landing-feature-icon">
+                        ↗
+                    </div>
+
+                    <h3>
+                        Source-Aware Answers
+                    </h3>
+
+                    <p>
+                        Get answers grounded in your uploaded documents
+                        with relevant source context.
+                    </p>
+
+                </article>
+
+
+                <article class="landing-feature-card">
+
+                    <div class="landing-feature-icon">
+                        ◷
+                    </div>
+
+                    <h3>
+                        Conversation History
+                    </h3>
+
+                    <p>
+                        Keep your document conversations organized
+                        and continue working from your workspace.
+                    </p>
+
+                </article>
+
+
+                <article class="landing-feature-card">
+
+                    <div class="landing-feature-icon">
+                        □
+                    </div>
+
+                    <h3>
+                        Secure Workspace
+                    </h3>
+
+                    <p>
+                        Your documents and workspace are protected
+                        through authenticated access and secure sessions.
+                    </p>
+
+                </article>
+
+
+                <article class="landing-feature-card">
+
+                    <div class="landing-feature-icon">
+                        ∞
+                    </div>
+
+                    <h3>
+                        Built to Scale
+                    </h3>
+
+                    <p>
+                        Designed as a modern AI SaaS workspace with
+                        document management, usage controls and subscriptions.
+                    </p>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- HOW IT WORKS -->
+
+        <section
+            class="landing-section landing-how-section"
+            id="landingHowItWorks"
+        >
+
+            <div class="landing-section-heading">
+
+                <span class="landing-eyebrow">
+                    SIMPLE WORKFLOW
+                </span>
+
+                <h2>
+                    From document to answer in minutes
+                </h2>
+
+            </div>
+
+
+            <div class="landing-steps">
+
+                <div class="landing-step">
+
+                    <div class="landing-step-number">
+                        01
+                    </div>
+
+                    <div>
+                        <h3>Upload</h3>
+
+                        <p>
+                            Upload your PDF into your secure workspace.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="landing-step">
+
+                    <div class="landing-step-number">
+                        02
+                    </div>
+
+                    <div>
+                        <h3>Understand</h3>
+
+                        <p>
+                            DocuMind AI processes and indexes the document.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="landing-step">
+
+                    <div class="landing-step-number">
+                        03
+                    </div>
+
+                    <div>
+                        <h3>Ask</h3>
+
+                        <p>
+                            Ask questions naturally using your document.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="landing-step">
+
+                    <div class="landing-step-number">
+                        04
+                    </div>
+
+                    <div>
+                        <h3>Get answers</h3>
+
+                        <p>
+                            Receive contextual AI-powered answers.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- SECURITY -->
+
+        <section
+            class="landing-security"
+            id="landingSecurity"
+        >
+
+            <div>
+
+                <span class="landing-eyebrow">
+                    BUILT FOR YOUR WORKSPACE
+                </span>
+
+                <h2>
+                    AI that works with your documents,
+                    not around them.
+                </h2>
+
+                <p>
+                    DocuMind AI combines document processing,
+                    semantic retrieval and generative AI into
+                    one focused workspace.
+                </p>
+
+            </div>
+
+
+            <div class="landing-security-points">
+
+                <div>
+                    <strong>✓</strong>
+                    <span>Authenticated workspace access</span>
+                </div>
+
+                <div>
+                    <strong>✓</strong>
+                    <span>Document-based AI responses</span>
+                </div>
+
+                <div>
+                    <strong>✓</strong>
+                    <span>Usage and subscription management</span>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- FINAL CTA -->
+
+        <section class="landing-cta">
+
+            <span class="landing-eyebrow">
+                GET STARTED
+            </span>
+
+            <h2>
+                Ready to work smarter with your documents?
+            </h2>
+
+            <p>
+                Create your DocuMind AI workspace and start
+                turning documents into useful answers.
+            </p>
+
+            <button
+                type="button"
+                class="landing-primary-button landing-cta-button"
+                id="landingCtaButton"
+            >
+                Create Account
+                <span>→</span>
+            </button>
+
+        </section>
+
+    </main>
+
+
+    <!-- LANDING FOOTER -->
+
+    <footer class="landing-footer">
+
+        <div>
+            <strong>DocuMind AI</strong>
+            <span>Document Intelligence</span>
+        </div>
+
+        <span>
+            © 2026 DocuMind AI · AI Document Workspace
+        </span>
+
+    </footer>
+
+</div>
+<!-- =========================================
+     AUTHENTICATION SCREEN
+========================================= -->
+
+<div id="authScreen" class="auth-screen">
+
+    <div class="auth-container">
+
+        <div class="auth-brand">
+
+            <div class="auth-logo">
+                D
+            </div>
+
+            <div>
+                <h1>DocuMind AI</h1>
+                <p>Document Intelligence</p>
+            </div>
+
+        </div>
+
+
+        <div class="auth-card">
+
+            <!-- LOGIN -->
+
+            <div id="loginView">
+
+                <div class="auth-header">
+
+                    <span class="section-label">
+                        SECURE WORKSPACE
+                    </span>
+
+                    <h2>
+                        Welcome back
+                    </h2>
+
+                    <p>
+                        Sign in to continue to your AI workspace.
+                    </p>
+
+                </div>
+
+
+                <form id="loginForm" class="auth-form">
+
+                    <div class="form-group">
+
+                        <label for="loginEmail">
+                            Email address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="loginEmail"
+                            placeholder="you@example.com"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="loginPassword">
+                            Password
+                        </label>
+
+                        <div class="password-wrapper">
+
+                            <input
+                                type="password"
+                                id="loginPassword"
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-target="loginPassword"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        id="loginButton"
+                        class="auth-submit-button"
+                        type="submit"
+                    >
+                        Sign In
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- REGISTER -->
+
+            <div id="registerView" hidden>
+
+                <div class="auth-header">
+
+                    <span class="section-label">
+                        GET STARTED
+                    </span>
+
+                    <h2>
+                        Create your account
+                    </h2>
+
+                    <p>
+                        Create an account to start using DocuMind AI.
+                    </p>
+
+                </div>
+
+
+                <form id="registerForm" class="auth-form">
+
+                    <div class="form-group">
+
+                        <label for="registerEmail">
+                            Email address
+                        </label>
+
+                        <input
+                            type="email"
+                            id="registerEmail"
+                            placeholder="you@example.com"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="registerPassword">
+                            Password
+                        </label>
+
+                        <div class="password-wrapper">
+
+                            <input
+                                type="password"
+                                id="registerPassword"
+                                placeholder="Minimum 8 characters"
+                                autocomplete="new-password"
+                                minlength="8"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-target="registerPassword"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="registerConfirmPassword">
+                            Confirm password
+                        </label>
+
+                        <div class="password-wrapper">
+
+                            <input
+                                type="password"
+                                id="registerConfirmPassword"
+                                placeholder="Re-enter your password"
+                                autocomplete="new-password"
+                                minlength="8"
+                                required
+                            >
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-target="registerConfirmPassword"
+                            >
+                                Show
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <button
+                        id="registerButton"
+                        class="auth-submit-button"
+                        type="submit"
+                    >
+                        Create Account
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <div
+                id="authMessage"
+                class="auth-message"
+                hidden
+            ></div>
+
+
+            <div class="auth-switch">
+
+                <span id="authSwitchText">
+                    Don't have an account?
+                </span>
+
+                <button
+                    type="button"
+                    id="authSwitchButton"
+                >
+                    Create account
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="auth-footer">
+
+            © 2026 DocuMind AI
+            <span>·</span>
+            Secure AI Document Workspace
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================================
+     MAIN APPLICATION
+========================================= -->
+
+<div class="app" id="app" hidden>
+
+    <!-- =========================================
+         TOP HEADER
+    ========================================== -->
+
+    <header class="topbar">
+
+    <!-- Mobile / Sidebar Toggle -->
+    <button
+        id="sidebarToggle"
+        class="sidebar-toggle"
+        type="button"
+        aria-label="Open navigation"
+        aria-expanded="false"
+    >
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <div class="brand">
+
+            <div class="brand-mark">
+                D
+            </div>
+
+            <div class="brand-text">
+
+                <h1>DocuMind AI</h1>
+
+                <span>
+                    Document Intelligence
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="topbar-right">
+
+            <div class="notification-wrapper">
+
+            <button
+                id="notificationButton"
+                class="notification-button"
+                type="button"
+                aria-label="Notifications"
+            >
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"
+                    />
+                    <path d="M10 21h4" />
+                </svg>
+            </button>
+            <div
+                id="notificationPanel"
+                class="notification-panel"
+                hidden
+            ></div>
+        </div>
+           <div class="user-menu" id="userMenu">
+
+    <div class="avatar" id="userAvatar">
+        V
+    </div>
+
+    <div class="user-info">
+
+        <strong id="userName">
+            Vaishnavi
+        </strong>
+
+        <span id="userRole">
+            AI Analytics
+        </span>
+
+    </div>
+
+    <span class="user-arrow">
+        ▾
+    </span>
+
+    <!-- PROFILE DROPDOWN -->
+<div class="user-dropdown" id="userDropdown" hidden>
+<div class="user-dropdown-header">
+    <div class="dropdown-avatar" id="dropdownAvatar">J</div>
+
+    <div class="user-dropdown-identity">
+        <strong id="dropdownUserName">Jay</strong>
+        <span id="dropdownUserRole">AI Analytics</span>
+        <span class="user-dropdown-email">
+            <span id="dropdownUserEmail">jay@gmail.com</span>
+        </span>
+    </div>
+</div>
+
+<div class="user-dropdown-divider"></div>
+
+<button type="button" class="user-dropdown-item" id="myAccountButton">
+    <span class="dropdown-item-icon">♙</span>
+    <span class="user-dropdown-copy">
+        <span>My Account</span>
+        <small>View your profile information</small>
+    </span>
+    <span class="user-dropdown-chevron">›</span>
+</button>
+
+<button type="button" class="user-dropdown-item" id="roleAccessButton">
+    <span class="dropdown-item-icon">♧</span>
+    <span class="user-dropdown-copy">
+        <span>Role &amp; Access</span>
+        <small>View your role and permissions</small>
+    </span>
+    <span class="user-dropdown-chevron">›</span>
+</button>
+
+<button type="button" class="user-dropdown-item" id="appearanceButton">
+    <span class="dropdown-item-icon">☼</span>
+    <span class="user-dropdown-copy">
+        <span>Appearance</span>
+        <small id="dropdownAppearanceLabel">Light mode</small>
+    </span>
+    <span class="user-dropdown-chevron">›</span>
+</button>
+
+<div class="user-dropdown-divider"></div>
+
+<button type="button"
+        class="user-dropdown-item user-dropdown-logout"
+        id="profileLogoutButton">
+    <span class="dropdown-item-icon">↪</span>
+    <span class="user-dropdown-copy">
+        <span>Logout</span>
+    </span>
+</button>
+
+<div class="user-dropdown-footer">
+    DocuMind AI v2.0.0
+</div>
+</div>
+</div>
+
+</header>
+
+    <!-- ========================================= 
+        APPLICATION BODY 
+    ========================================== --> 
+
+    <div class="app-body">
+
+        <!-- =====================================
+             SIDEBAR
+        ====================================== -->
+
+        <aside class="sidebar">
+            <nav class="sidebar-nav">
+                <button
+                    class="nav-item active"
+                    id="dashboardNav"
+                    data-page="dashboard"
+                    type="button"
+                >
+                    <svg viewBox="0 0 24 24">
+                        <rect
+                            x="4"
+                            y="4"
+                            width="6"
+                            height="6"
+                            rx="1"
+                        />
+                        <rect
+                            x="14"
+                            y="4"
+                            width="6"
+                            height="6"
+                            rx="1"
+                        />
+                        <rect
+                            x="4"
+                            y="14"
+                            width="6"
+                            height="6"
+                            rx="1"
+                        />
+                        <rect
+                            x="14"
+                            y="14"
+                            width="6"
+                            height="6"
+                            rx="1"
+                        />
+                    </svg>
+
+                    <span>
+                        Dashboard
+                    </span>
+
+                </button>
+
+                <button
+                    class="nav-item"
+                    id="documentsNav"
+                    data-page="documents"
+                    type="button"
+                >
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M6 3h9l4 4v14H6z"
+                        />
+                        <path d="M14 3v5h5" />
+                        <path d="M9 13h6" />
+                        <path d="M9 17h6" />
+                    </svg>
+
+                    <span>
+                        Documents
+                    </span>
+
+                </button>
+
+                <button
+                    class="nav-item"
+                    id="assistantNav"
+                    data-page="assistant"
+                    type="button"
+                >
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M5 5h14v10H8l-3 3z"
+                        />
+                        <path d="M9 9h.01" />
+                        <path d="M12 9h.01" />
+                        <path d="M15 9h.01" />
+                    </svg>
+
+                    <span>
+                        AI Assistant
+                    </span>
+
+                </button>
+
+
+
+                <button
+                    class="nav-item"
+                    id="historyNav"
+                    data-page="history"
+                    type="button"
+                >
+
+                    <svg viewBox="0 0 24 24">
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="8"
+                        />
+                        <path d="M12 8v5l3 2" />
+                        <path d="M4 12H2" />
+                    </svg>
+
+                    <span>
+                        History
+                    </span>
+
+                </button>
+
+            </nav>
+
+
+
+            <div class="sidebar-bottom">
+
+
+                <button
+                    class="nav-item"
+                    id="settingsNav"
+                    data-page="settings"
+                    type="button"
+                >
+
+                    <svg viewBox="0 0 24 24">
+                        <circle
+                            cx="12"
+                            cy="12"
+                            r="3"
+                        />
+                        <path
+                            d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.1h-2.6V20a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H6v-2.6h.3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1 1.8-1.8.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V5h2.6v.3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.8 1.8-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.3v2.6H21a1.7 1.7 0 0 0-1.6 1z"
+                        />
+                    </svg>
+
+                    <span>
+                        Settings
+                    </span>
+
+                </button>
+
+            </div>
+
+        </aside>
+                <!-- Mobile Sidebar Overlay -->
+        <div
+            id="sidebarOverlay"
+            class="sidebar-overlay"
+            aria-hidden="true"
+        ></div>
+
+        <!-- =====================================
+             MAIN CONTENT
+        ====================================== -->
+
+        <main class="main">
+
+
+            <!-- =================================
+                 DASHBOARD HEADER
+            ================================== -->
+
+            <section class="dashboard-heading">
+
+                <div>
+
+                    <span class="section-label">
+                        WORKSPACE
+                    </span>
+
+                    <h2 id="dashboardGreeting">
+                    Welcome back
+                    <span class="wave">👋</span>
+                </h2>
+
+                    <p>
+                        Welcome back to your AI workspace.
+                    </p>
+
+                </div>
+
+
+                <button
+                    id="dashboardUploadButton"
+                    class="primary-button"
+                    type="button"
+                >
+
+                    <span>+</span>
+
+                    Upload Document
+
+                </button>
+
+            </section>
+
+
+
+            <!-- =================================
+                STATISTICS
+            ================================== -->
+
+            <section class="stats-grid">
+
+                <!-- Documents -->
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M6 3h9l4 4v14H6z" />
+                            <path d="M14 3v5h5" />
+                            <path d="M9 13h6" />
+                            <path d="M9 17h6" />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <span>Documents</span>
+                        <strong id="documentCount">0</strong>
+                    </div>
+
+                </div>
+
+
+                <!-- Questions -->
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M5 5h14v10H8l-3 3z" />
+                            <path d="M9 9h.01" />
+                            <path d="M12 9h.01" />
+                            <path d="M15 9h.01" />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <span>Questions</span>
+                        <strong id="questionCount">0</strong>
+                    </div>
+
+                </div>
+
+
+                <!-- AI Usage -->
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 3l2.2 5.8L20 11l-5.8 2.2L12 19l-2.2-5.8L4 11l5.8-2.2z" />
+                        </svg>
+                    </div>
+
+                    <div>
+                        <span>AI Usage</span>
+                        <strong id="storageUsed">0%</strong>
+                    </div>
+
+                </div>
+
+
+                <!-- AI Status -->
+                <div class="stat-card">
+
+                    <div class="stat-icon">
+
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 3a9 9 0 1 0 9 9" />
+                            <path d="M12 7v5l3 2" />
+                            <path d="M17 3h4v4" />
+                        </svg>
+
+                    </div>
+
+                    <div>
+                        <span>AI Status</span>
+                        <strong>Ready</strong>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================
+                 RECENT DOCUMENTS
+            ================================== -->
+
+            <section class="card documents-card">
+
+
+                <div class="documents-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            LIBRARY
+                        </span>
+
+                        <h2>
+                            Recent Documents
+                        </h2>
+
+                    </div>
+
+
+                    <button
+                        class="view-all-button"
+                        id="viewAllDocuments"
+                        type="button"
+                    >
+                        View all →
+                    </button>
+
+                </div>
+
+
+
+                <div
+                    id="documentsContainer"
+                    class="documents-container"
+                >
+
+                    <div
+                        id="emptyDocuments"
+                        class="empty-state"
+                    >
+
+                        <div class="empty-icon">
+
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M3 6h7l2 2h9v11H3z"
+                                />
+                                <path d="M3 6v-2h7l2 2" />
+                            </svg>
+
+                        </div>
+
+                        <h3>
+                            No documents yet
+                        </h3>
+
+                        <p>
+                            Upload your first PDF to start
+                            using DocuMind AI.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <button
+                    class="upload-new-button"
+                    id="documentsUploadButton"
+                    type="button"
+                >
+
+                    <span>+</span>
+
+                    Upload New Document
+
+                </button>
+
+            </section>
+
+
+
+            <!-- =================================
+                 UPLOAD SECTION
+            ================================== -->
+
+            <section
+                class="card upload-card"
+                id="uploadCard"
+            >
+
+                <div class="section-title">
+
+                    <span class="section-label">
+                        DOCUMENT INGESTION
+                    </span>
+
+                    <h2>
+                        Upload New Document
+                    </h2>
+
+                    <p>
+                        Upload a PDF and let DocuMind AI
+                        prepare it for intelligent question answering.
+                    </p>
+
+                </div>
+
+
+
+                <div
+                    class="upload-area"
+                    id="uploadArea"
+                >
+
+                    <div class="upload-icon">
+
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M12 16V4"
+                            />
+                            <path
+                                d="M8 8l4-4 4 4"
+                            />
+                            <path
+                                d="M5 13v6h14v-6"
+                            />
+                        </svg>
+
+                    </div>
+
+
+                    <h3>
+                        Drop your PDF here
+                    </h3>
+
+
+                    <p>
+                        or choose a file from your computer
+                    </p>
+
+
+                    <input
+                        type="file"
+                        id="fileInput"
+                        accept=".pdf,application/pdf"
+                        hidden
+                    >
+
+
+                    <button
+                        class="primary-button"
+                        id="chooseFileButton"
+                        type="button"
+                    >
+                        Choose PDF
+                    </button>
+
+                </div>
+
+
+
+                <div
+                    class="file-info"
+                    id="fileInfo"
+                    hidden
+                >
+
+                    <div>
+
+                        <strong id="fileName">
+                            No file selected
+                        </strong>
+
+                        <span id="fileStatus">
+                            Ready
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <button
+                    class="upload-button"
+                    id="uploadButton"
+                    disabled
+                    type="button"
+                >
+                    Upload & Process
+                </button>
+
+            </section>
+
+
+
+            <!-- =================================
+                 AI ASSISTANT
+            ================================== -->
+
+            <section
+                id="chatCard"
+                class="card chat-card"
+                hidden
+            >
+
+                <div class="chat-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            AI ASSISTANT
+                        </span>
+
+                        <h2>
+                            Ask anything about your document
+                        </h2>
+
+                        <p id="chatDocumentName">
+                            Your document is ready.
+                        </p>
+
+                    </div>
+
+
+                    <div class="ready-status">
+
+                        <span></span>
+
+                        Ready
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="chat-content" id="chatHistory">
+
+                    <div class="empty-state chat-empty-state">
+                        <div class="empty-icon">
+                            ✦
+                        </div>
+
+                        <h3>
+                            Start a conversation
+                        </h3>
+
+                        <p>
+                            Ask anything about your document.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="chat-input-wrapper">
+
+                    <textarea
+                        id="questionInput"
+                        placeholder="Ask your document..."
+                        rows="2"
+                    ></textarea>
+
+
+                    <button
+                        id="askButton"
+                        class="ask-button"
+                        type="button"
+                    >
+
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M4 12h15"
+                            />
+                            <path
+                                d="M13 6l6 6-6 6"
+                            />
+                        </svg>
+
+                    </button>
+
+                </div>
+
+            </section>
+     
+        
+        <!-- =================================
+             PERSONALIZATION
+        ================================== -->
+
+        <section
+            class="settings-section"
+            data-settings-content="personalization"
+            hidden
+        >
+
+            <div class="settings-page-header">
+
+                <span class="section-label">
+                    SETTINGS
+                </span>
+
+                <h1>
+                    Personalization
+                </h1>
+
+                <p>
+                    Customize how DocuMind AI behaves in your workspace.
+                </p>
+
+            </div>
+
+
+            <div class="settings-card">
+
+                <div class="settings-card-header">
+
+                    <div>
+
+                        <h2>
+                            Workspace preferences
+                        </h2>
+
+                        <p>
+                            Personalize your experience.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="settings-option-list">
+
+                    <div class="settings-option">
+
+                        <div>
+
+                            <strong>
+                                Remember document context
+                            </strong>
+
+                            <p>
+                                Keep document context available during your current session.
+                            </p>
+
+                        </div>
+
+                        <label class="settings-toggle">
+
+                            <input
+                                type="checkbox"
+                                id="rememberContext"
+                                checked
+                            >
+
+                            <span></span>
+
+                        </label>
+
+                    </div>
+
+
+                    <div class="settings-option">
+
+                        <div>
+
+                            <strong>
+                                Show source references
+                            </strong>
+
+                            <p>
+                                Display relevant document sources with AI responses.
+                            </p>
+
+                        </div>
+
+                        <label class="settings-toggle">
+
+                            <input
+                                type="checkbox"
+                                id="showSources"
+                                checked
+                            >
+
+                            <span></span>
+
+                        </label>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================
+             AI PREFERENCES
+        ================================== -->
+
+        <section
+            class="settings-section"
+            data-settings-content="ai"
+            hidden
+        >
+
+            <div class="settings-page-header">
+
+                <span class="section-label">
+                    AI SETTINGS
+                </span>
+
+                <h1>
+                    AI Preferences
+                </h1>
+
+                <p>
+                    Configure how DocuMind AI works with your documents.
+                </p>
+
+            </div>
+
+
+            <div class="settings-card">
+
+                <div class="settings-card-header">
+
+                    <div>
+
+                        <h2>
+                            AI Assistant
+                        </h2>
+
+                        <p>
+                            Configure your document question-answering experience.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="settings-details">
+
+                    <div class="settings-detail-row">
+
+                        <div>
+
+                            <strong>
+                                AI model
+                            </strong>
+
+                            <p>
+                                Model currently used for document question answering.
+                            </p>
+
+                        </div>
+
+                        <span class="settings-badge">
+                            Gemini
+                        </span>
+
+                    </div>
+
+
+                    <div class="settings-detail-row">
+
+                        <div>
+
+                            <strong>
+                                Retrieval engine
+                            </strong>
+
+                            <p>
+                                Semantic document retrieval powered by your vector database.
+                            </p>
+
+                        </div>
+
+                        <span class="settings-badge">
+                            ChromaDB
+                        </span>
+
+                    </div>
+
+
+                    <div class="settings-detail-row">
+
+                        <div>
+
+                            <strong>
+                                Document intelligence
+                            </strong>
+
+                            <p>
+                                Ask questions using the content of your uploaded PDFs.
+                            </p>
+
+                        </div>
+
+                        <span class="settings-status">
+
+                            <span class="settings-status-dot"></span>
+
+                            Ready
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================
+             BILLING
+        ================================== -->
+
+        <section
+            class="settings-section"
+            data-settings-content="billing"
+            hidden
+        >
+
+            <div class="settings-page-header">
+
+                <span class="section-label">
+                    ACCOUNT
+                </span>
+
+                <h1>
+                    Billing
+                </h1>
+
+                <p>
+                    Manage your DocuMind AI subscription and billing information.
+                </p>
+
+            </div>
+            <!-- Current Plan -->
+
+            <div class="settings-card billing-plan-card">
+
+                <div class="billing-plan-header">
+
+                    <div>
+
+                        <span class="billing-plan-label">
+                            CURRENT PLAN
+                        </span>
+
+                        <h2 id="billingPlanName">
+                            Free
+                        </h2>
+
+                        <p id="billingPlanDescription">
+                            Intelligence for everyday document tasks.
+                        </p>
+                    </div>
+                    <div class="billing-plan-price">
+
+                        <strong id="billingPlanPrice">
+                            ₹0
+                        </strong>
+
+                        <span>
+                            / month
+                        </span>
+                    </div>
+                </div>
+                <div class="billing-plan-divider"></div>
+                <!-- Usage Summary -->
+
+                <div class="billing-usage-grid">
+
+                    <div class="billing-usage-item">
+
+                        <span>
+                            Documents
+                        </span>
+
+                        <strong id="billingDocumentsUsed">
+                            0 / 3
+                        </strong>
+
+                    </div>
+                    <div class="billing-usage-item">
+
+                        <span>
+                            Questions
+                        </span>
+
+                        <strong id="billingQuestionsUsed">
+                            0 / 20
+                        </strong>
+
+                    </div>
+                    <div class="billing-usage-item">
+
+                        <span>
+                            PDF size
+                        </span>
+
+                        <strong id="billingFileSize">
+                            5 MB
+                        </strong>
+                    </div>
+                </div>
+                <div class="settings-actions">
+
+                    <button
+                        type="button"
+                        class="secondary-button"
+                        id="billingManageButton"
+                    >
+                        Manage plan
+                    </button>
+
+                </div>
+
+            </div>
+            <!-- Billing Information -->
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <div>
+                        <h2>
+                            Billing information
+                        </h2>
+                        <p>
+                            Information associated with your DocuMind AI account.
+                        </p>
+                    </div>
+                    <button
+                        type="button"
+                        class="settings-outline-button"
+                        id="billingEditButton"
+                    >
+                        Edit
+                    </button>
+
+                </div>
+                <div class="settings-details">
+                    <div class="settings-detail-row">
+                        <div>
+                            <strong>
+                                Billing email
+                            </strong>
+                            <p id="billingEmail">
+                                —
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Payment Methods -->
+
+            <div class="settings-card">
+
+                <div class="settings-card-header">
+
+                    <div>
+
+                        <h2>
+                            Payment methods
+                        </h2>
+
+                        <p>
+                            Manage payment methods used for your subscription.
+                        </p>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="settings-outline-button"
+                        id="addPaymentMethodButton"
+                    >
+                        Add new
+                    </button>
+
+                </div>
+
+
+                <div class="settings-empty-state">
+
+                    <div class="settings-empty-icon">
+                        ◇
+                    </div>
+
+                    <p>
+                        No payment methods available.
+                    </p>
+                    <span>
+                        Payment methods will appear here after you add one.
+                    </span>
+                </div>
+            </div>
+            <!-- Premium Features -->
+
+            <div
+                class="settings-card premium-billing-card"
+                id="premiumBillingCard"
+            >
+
+                <div class="settings-card-header">
+
+                    <div>
+
+                        <span class="billing-plan-label">
+                            PREMIUM
+                        </span>
+
+                        <h2>
+                            Unlock more with DocuMind Premium
+                        </h2>
+
+                        <p>
+                            Get higher document, question, and file-size limits.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="premium-feature-list">
+
+                    <div class="premium-feature">
+                        <span>✦</span>
+                        <strong>50 documents</strong>
+                    </div>
+
+                    <div class="premium-feature">
+                        <span>✦</span>
+                        <strong>500 questions</strong>
+                    </div>
+
+                    <div class="premium-feature">
+                        <span>✦</span>
+                        <strong>25 MB PDF uploads</strong>
+                    </div>
+
+                    <div class="premium-feature">
+                        <span>✦</span>
+                        <strong>Advanced document intelligence</strong>
+                    </div>
+
+                </div>
+
+
+                <div class="settings-actions">
+
+                    <button
+                        type="button"
+                        class="primary-button"
+                        id="billingUpgradeButton"
+                    >
+                        Upgrade to Premium
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================
+             USAGE
+        ================================== -->
+
+        <section
+            class="settings-section"
+            data-settings-content="usage"
+            hidden
+        >
+
+            <div class="settings-page-header">
+
+                <span class="section-label">
+                    ACCOUNT
+                </span>
+
+                <h1>
+                    Usage
+                </h1>
+
+                <p>
+                    Monitor your DocuMind AI document and question usage.
+                </p>
+
+            </div>
+
+
+            <!-- Questions Usage -->
+
+            <div class="settings-card">
+
+                <div class="usage-card-header">
+
+                    <div>
+
+                        <h2>
+                            Questions
+                        </h2>
+
+                        <p>
+                            Questions asked using your AI document assistant.
+                        </p>
+
+                    </div>
+
+                    <strong id="usageQuestionsText">
+                        0 / 20
+                    </strong>
+
+                </div>
+
+
+                <div class="usage-progress">
+
+                    <div
+                        class="usage-progress-bar"
+                        id="usageQuestionsBar"
+                        style="width: 0%;"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Documents Usage -->
+
+            <div class="settings-card">
+
+                <div class="usage-card-header">
+
+                    <div>
+
+                        <h2>
+                            Documents
+                        </h2>
+
+                        <p>
+                            Number of documents currently stored in your workspace.
+                        </p>
+
+                    </div>
+
+                    <strong id="usageDocumentsText">
+                        0 / 3
+                    </strong>
+
+                </div>
+
+
+                <div class="usage-progress">
+
+                    <div
+                        class="usage-progress-bar"
+                        id="usageDocumentsBar"
+                        style="width: 0%;"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PDF Size -->
+
+            <div class="settings-card">
+
+                <div class="usage-card-header">
+
+                    <div>
+
+                        <h2>
+                            Maximum PDF size
+                        </h2>
+
+                        <p>
+                            Maximum file size allowed by your current plan.
+                        </p>
+
+                    </div>
+
+                    <strong id="usageFileSize">
+                        5 MB
+                    </strong>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================
+             SECURITY
+        ================================== -->
+
+        <section
+            class="settings-section"
+            data-settings-content="security"
+            hidden
+        >
+
+            <div class="settings-page-header">
+
+                <span class="section-label">
+                    ACCOUNT
+                </span>
+
+                <h1>
+                    Security
+                </h1>
+
+                <p>
+                    Manage your account security and authentication.
+                </p>
+
+            </div>
+
+
+            <!-- Authentication -->
+
+            <div class="settings-card">
+
+                <div class="settings-card-header">
+
+                    <div>
+
+                        <h2>
+                            Authentication
+                        </h2>
+
+                        <p>
+                            Your account is protected using secure authentication.
+                        </p>
+
+                    </div>
+
+                    <span class="settings-status">
+
+                        <span class="settings-status-dot"></span>
+
+                        Protected
+
+                    </span>
+
+                </div>
+
+
+                <div class="settings-details">
+
+                    <div class="settings-detail-row">
+
+                        <div>
+
+                            <strong>
+                                Password authentication
+                            </strong>
+
+                            <p>
+                                Your account uses a securely hashed password.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="settings-detail-row">
+
+                        <div>
+
+                            <strong>
+                                Session authentication
+                            </strong>
+
+                            <p>
+                                Your workspace uses secure access tokens.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Account Actions -->
+
+            <div class="settings-card">
+
+                <div class="settings-card-header">
+
+                    <div>
+
+                        <h2>
+                            Account actions
+                        </h2>
+
+                        <p>
+                            Sign out from your current DocuMind AI session.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="settings-actions">
+
+                    <button
+                        type="button"
+                        class="settings-danger-button"
+                        id="settingsLogoutButton"
+                    >
+                        Logout
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</section>
+
+            <!-- =================================
+                 LOADING
+            ================================== -->
+
+            <div
+                id="loading"
+                class="loading"
+                hidden
+            >
+
+                <span class="spinner"></span>
+
+                <span id="loadingText">
+                    Processing document...
+                </span>
+
+            </div>
+
+
+
+            <!-- =================================
+                 ERROR
+            ================================== -->
+
+            <div
+                class="error-message"
+                id="errorMessage"
+                hidden
+            ></div>
+
+
+        </main>
+
+    </div>
+
+
+
+    <!-- =========================================
+         FOOTER
+    ========================================== -->
+
+    <footer class="footer">
+
+        <span>
+            © 2026 DocuMind AI
+        </span>
+
+        <span>
+            Gemini · FastAPI · Qdrant
+        </span>
+
+    </footer>
+
+
+</div>
+<!-- =========================================
+     MATHJAX
+========================================= -->
+
+<script>
+window.MathJax = {
+    tex: {
+        inlineMath: [
+            ["$", "$"],
+            ["\\(", "\\)"]
+        ],
+        displayMath: [
+            ["$$", "$$"],
+            ["\\[", "\\]"]
+        ]
+    },
+
+    options: {
+        skipHtmlTags: [
+            "script",
+            "noscript",
+            "style",
+            "textarea",
+            "pre",
+            "code"
+        ]
+    },
+
+    startup: {
+        typeset: false
+    }
+};
+</script>
+
+<script
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+></script>
+
+<!-- =========================================
+     DOCUMIND APPLICATION
+========================================= -->
+
+<script src="/static/app.js"></script>
+
+</body>
+
+</html>
