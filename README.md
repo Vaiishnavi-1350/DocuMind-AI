@@ -1,38 +1,42 @@
 # DocuMind AI
 
-**An AI-powered document intelligence platform using Retrieval-Augmented Generation (RAG).**
+**An AI-Powered Document Intelligence Platform Using Retrieval-Augmented Generation (RAG)**
 
-DocuMind AI enables users to upload PDF documents, ask questions about their content, and receive AI-generated answers supported by retrieved document context.
+DocuMind AI is an intelligent document question-answering platform that allows users to upload PDF documents, retrieve relevant information, and receive AI-generated answers grounded in document context.
+
+It combines semantic embeddings, hybrid retrieval, Reciprocal Rank Fusion (RRF), and cross-encoder reranking to improve the relevance of retrieved information.
 
 ## Features
 
 - PDF document upload and ingestion
 - Document-based question answering
-- BGE-M3 embeddings
-- Qdrant vector database
-- Hybrid retrieval and Reciprocal Rank Fusion (RRF)
-- Cross-encoder reranking
-- Gemini-powered answer generation
-- User authentication and access tokens
+- BGE-M3 semantic embeddings
+- Qdrant vector database integration
+- Hybrid retrieval with Reciprocal Rank Fusion (RRF)
+- Cross-encoder document reranking
+- Google Gemini-powered answer generation
+- JWT-based user authentication
 - Document management and chat history
-- Subscription and payment workflow
-- Offline evaluation utilities
+- Subscription and payment workflow prototype
+- Offline RAG answer evaluation using saved outputs
 
 ## Technology Stack
 
 | Component | Technology |
 |---|---|
 | Backend | Python, FastAPI |
-| API documentation | Swagger UI |
+| API Documentation | Swagger UI |
 | Embeddings | BGE-M3 |
-| Vector database | Qdrant |
-| Reranking | Cross-encoder |
-| Language model | Google Gemini |
+| Vector Database | Qdrant |
+| Retrieval | Hybrid Search, RRF |
+| Reranking | Cross-Encoder |
+| Language Model | Google Gemini |
 | Database | SQLite, SQLAlchemy |
-| PDF processing | PyPDF |
+| Authentication | JWT, pwdlib |
+| PDF Processing | PyPDF |
 | Frontend | HTML, CSS, JavaScript |
 | Containerization | Docker Compose |
-| CI/CD | GitHub Actions |
+| Continuous Integration | GitHub Actions |
 
 ## Project Structure
 
@@ -56,23 +60,23 @@ documind-ai/
 
 ## Prerequisites
 
-- Python 3.11 or another Python version compatible with the installed dependencies
-- Docker Desktop
+- Python 3.12 (tested development environment)
 - Git
-- A Google Gemini API key for features that call Gemini
+- Docker Desktop
+- Google Gemini API key for AI answer generation
 
-## Installation
+## Installation and Setup
 
 ### 1. Clone the repository
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
+git clone <https://github.com/Vaiishnavi-1350/DocuMind-AI>
 cd documind-ai
 ```
 
-### 2. Create and activate a virtual environment
+### 2. Create a virtual environment
 
-Windows PowerShell:
+**Windows PowerShell:**
 
 ```powershell
 python -m venv venv
@@ -88,64 +92,70 @@ pip install -r requirements.txt
 
 ### 4. Configure environment variables
 
-Create your local `.env` file by copying the template:
+Create a local `.env` file using the example template:
 
 ```powershell
 Copy-Item .env.example .env
 ```
 
-Set the required values in `.env`, including a secure `JWT_SECRET_KEY`. Configure `GEMINI_API_KEY` and `GEMINI_MODEL` if you intend to use Gemini-powered generation.
+Configure the required environment variables, including:
 
-**Never commit `.env` or expose API keys, passwords, or JWT secrets.**
+- `JWT_SECRET_KEY`
+- `GEMINI_API_KEY`
+- `GEMINI_MODEL`
+
+Refer to `.env.example` for the complete configuration.
+
+**Security:** Never commit your `.env` file or expose API keys, passwords, or authentication secrets.
 
 ### 5. Start Qdrant
 
-Start Docker Desktop, then run:
+Make sure Docker Desktop is running.
 
 ```powershell
 docker compose up -d qdrant
 ```
 
-Check its health endpoint:
+Check the Qdrant health endpoint:
 
 ```powershell
 Invoke-RestMethod http://localhost:6333/healthz
 ```
 
-### 6. Start the application
+### 6. Run the FastAPI application
 
-From the repository root:
+From the project root:
 
 ```powershell
 uvicorn app.main:app --reload
 ```
 
-Open the application at:
+Access the application:
 
 - Application: http://127.0.0.1:8000
-- Swagger API documentation: http://127.0.0.1:8000/docs
+- Swagger API Documentation: http://127.0.0.1:8000/docs
 
 These URLs assume the application serves the frontend at its root URL.
 
 ## Environment Configuration
 
-The `.env.example` file documents configuration options for:
+The `.env.example` file provides configuration for:
 
-- Application metadata and environment
+- Application settings
 - Database connection
 - JWT authentication
 - Qdrant connection and collection
 - Embedding and reranking models
-- Gemini generation
-- Retrieval and chunking
-- Upload storage
-- CORS
+- Gemini API integration
+- Retrieval and document chunking
+- File upload storage
+- CORS configuration
 
-Use `.env.example` as a template. Keep real credentials in your local `.env` file or your deployment platform's secret manager.
+Keep all actual credentials and secrets in your local `.env` file or deployment secret manager.
 
-## Docker
+## Docker Configuration
 
-Docker Compose currently defines the Qdrant service and a persistent storage volume.
+The current Docker Compose configuration runs the Qdrant vector database with persistent storage.
 
 Start Qdrant:
 
@@ -153,32 +163,53 @@ Start Qdrant:
 docker compose up -d qdrant
 ```
 
-Stop it:
+Stop Qdrant:
 
 ```powershell
 docker compose down
 ```
 
-The FastAPI application is started separately using Uvicorn in the current development setup.
+The FastAPI application currently runs separately through Uvicorn. A complete containerized application stack is a future improvement.
 
-## Evaluation
+## Offline Evaluation
 
-The project includes offline evaluation utilities for assessing saved RAG answers and consolidating evaluation reports. Offline evaluation can be run without additional Gemini requests when the evaluation scripts use saved outputs.
+DocuMind AI includes an offline evaluation module for assessing saved question-answering results.
 
-Consult the `app/evaluation/` directory for the available scripts and reports.
+The evaluation workflow:
 
-## Security Notes
+- Uses previously saved JSON and SQLite chat history.
+- Matches saved answers against benchmark questions.
+- Generates evaluation reports.
+- Avoids additional Gemini API calls.
+- Does not modify the production RAG pipeline.
 
-- Keep `.env` out of version control.
+Evaluation scripts are available in `app/evaluation/`.
+
+## Security Considerations
+
+- Keep `.env` and all credentials private.
 - Use a strong, unique JWT secret.
-- Avoid committing uploaded documents, private chat history, databases, or personal data.
+- Avoid committing private documents, databases, chat histories, or personal information.
 - Configure production CORS origins explicitly.
-- Use HTTPS and production-grade secret management when deploying.
+- Use HTTPS and secure secret management for deployment.
 
 ## Project Status
 
-DocuMind AI is under active development. Docker deployment, automated CI/CD validation, and production deployment should be considered complete only after their workflows have been tested successfully.
+DocuMind AI is an actively developed project.
+
+**Completed:**
+- Core document-based RAG functionality
+- Hybrid retrieval and reranking
+- User authentication and chat history
+- Offline answer evaluation
+- GitHub Actions CI validation
+
+**Future Improvements:**
+- Complete Docker application stack
+- Continuous Deployment (CD)
+- Production deployment
+- Further evaluation and performance improvements
 
 ## License
 
-Add a license before distributing this project publicly.
+A license has not yet been added. Usage and redistribution permissions will be defined when a license is selected.

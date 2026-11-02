@@ -7,10 +7,14 @@ __pycache__/
 *$py.class
 *.pyo
 *.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
 # ==============================
 # Virtual Environment
 # ==============================
+
 venv/
 .venv/
 env/
@@ -25,20 +29,26 @@ ENV/
 !.env.example
 
 # ==============================
-# Database
+# Database and Local Data
 # ==============================
+
 data/*.db
 data/*.sqlite
 data/*.sqlite3
+data/**/*.db
+data/**/*.sqlite
+data/**/*.sqlite3
+data/**/*.bin
 
 # ==============================
-# Uploaded files
+# Uploaded Documents
 # ==============================
 
 data/uploads/
+data/**/*.pdf
 
 # ==============================
-# Qdrant local storage
+# Qdrant Local Storage
 # ==============================
 
 qdrant_storage/
@@ -59,21 +69,16 @@ logs/
 .idea/
 
 # ==============================
-# Temporary files
+# Temporary Files
 # ==============================
 
 *.tmp
 *.temp
 *.bak
 
-# Local databases and uploaded documents
-data/*.db
-data/*.sqlite3
-data/**/*.db
-data/**/*.sqlite3
-data/**/*.bin
-data/**/*.pdf
+# ==============================
+# Evaluation Data
+# ==============================
 
-# Local evaluation reports and saved results
 app/evaluation/reports/*.json
 app/evaluation/documind_saved_history.json
