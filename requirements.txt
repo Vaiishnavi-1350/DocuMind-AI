@@ -1,16 +1,44 @@
-fastapi
-uvicorn[standard]
-python-multipart
 
-langchain
-langchain-community
-langchain-google-genai
-langchain-chroma
-langchain-text-splitters
+# =====================================
+# DocuMind AI - Python Dependencies
+# =====================================
 
-google-generativeai
+# Backend
+fastapi==0.141.1
+uvicorn[standard]==0.52.4
+python-multipart==0.0.32
 
-chromadb
-pypdf
+# Configuration and validation
+python-dotenv==1.2.3
+pydantic==2.13.5
+pydantic-settings==2.15.0
 
-python-dotenv
+# LangChain and Gemini
+langchain==1.4.0
+langchain-community==0.4.2
+langchain-core==1.6.2
+langchain-text-splitters==1.1.2
+langchain-google-genai==4.4.0
+
+# BGE-M3 embeddings
+FlagEmbedding==1.4.2
+
+# Cross-encoder reranking
+sentence-transformers==6.1.0
+
+# Vector database
+qdrant-client==1.19.1
+
+# PDF processing
+pypdf==6.18.0
+
+# Database
+SQLAlchemy==2.0.52
+
+# Authentication
+PyJWT==2.14.0
+pwdlib[argon2]==0.3.1
+
+# Machine learning utilities
+numpy==2.2.6
+scikit-learn==1.7.2
