@@ -32,6 +32,16 @@ qdrant-client==1.19.1
 # PDF processing
 pypdf==6.18.0
 
+# Word document processing
+python-docx
+
+# CSV processing
+pandas
+
+# Image processing and OCR
+Pillow
+pytesseract
+
 # Database
 SQLAlchemy==2.0.52
 

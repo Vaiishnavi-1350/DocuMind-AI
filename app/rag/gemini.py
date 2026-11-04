@@ -230,6 +230,59 @@ def _build_context(
         total_chars += len(source_text)
 
     return "\n\n".join(context_parts)
+
+# ============================================================
+# BUILD GENERAL KNOWLEDGE PROMPT
+# ============================================================
+
+def _build_general_knowledge_prompt(
+    question: str,
+) -> str:
+    """
+    Build a prompt for answering using general knowledge
+    when the uploaded document does not contain the answer.
+    """
+
+    return f"""
+You are DocuMind AI, a helpful AI assistant.
+
+The uploaded document does not contain enough relevant
+information to answer the user's question.
+
+Answer the question using your general knowledge.
+
+RULES:
+
+1. Answer the user's question directly and clearly.
+
+2. Use accurate general knowledge.
+
+3. Do not claim that information came from the uploaded
+   document.
+
+4. Do not invent document references, page numbers,
+   formulas, or citations.
+
+5. If the question is mathematical, explain the formula
+   and calculation when appropriate.
+
+6. If you are uncertain about a fact, clearly state
+   the uncertainty.
+
+7. Keep the answer concise but useful.
+
+8. Do not mention internal retrieval, embeddings,
+   reranking, or vector databases.
+
+USER QUESTION:
+
+{question}
+
+============================================================
+ANSWER
+============================================================
+"""
+
 # ============================================================
 # BUILD PROMPT
 # ============================================================
@@ -407,7 +460,6 @@ def _extract_response_text(
 # ============================================================
 # GEMINI REQUEST
 # ============================================================
-
 def _invoke_gemini(
     prompt: str,
 ) -> str:
@@ -509,21 +561,39 @@ def generate_answer(
             "Question cannot be empty."
         )
 
-    if not documents:
-
-        return (
-            "The information was not found "
-            "in the uploaded document."
-        )
+    
+    # ========================================================
+    # SELECT PROMPT
+    # ========================================================
 
     question = question.strip()
 
-    prompt = _build_prompt(
-        question=question,
-        documents=documents,
-    )
+    if not documents:
 
-        # --------------------------------------------------------
+        print(
+            "No document context available."
+        )
+
+        print(
+            "Preparing General Knowledge prompt."
+        )
+
+        prompt = _build_general_knowledge_prompt(
+            question=question
+        )
+
+    else:
+
+        print(
+            "Preparing document-grounded prompt."
+        )
+
+        prompt = _build_prompt(
+            question=question,
+            documents=documents,
+        )
+
+    # --------------------------------------------------------
     # ROBUST GEMINI RETRY HANDLING
     # --------------------------------------------------------
     #

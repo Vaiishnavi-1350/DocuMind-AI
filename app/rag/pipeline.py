@@ -56,17 +56,20 @@ SOURCE_SCORE_MARGIN = 1.0
 # Maximum number of source chips shown in UI
 MAX_DISPLAY_SOURCES = 5
 
-
-# ============================================================
-# EMPTY ANSWER
-# ============================================================
+# ========================================================
+# ANSWER TYPES
+# ========================================================
 
 NOT_FOUND_MESSAGE = (
-    "The information was not found in "
-    "the uploaded document."
+    "The information was not found "
+    "in the uploaded document."
 )
 
+DOCUMENT_ANSWER_TYPE = "document"
 
+GENERAL_KNOWLEDGE_ANSWER_TYPE = (
+    "general_knowledge"
+)
 # ============================================================
 # SELECT RELEVANT SOURCES
 # ============================================================
@@ -264,15 +267,13 @@ def _build_sources(
         )
 
     return sources
-
-
 # ============================================================
 # MAIN RAG FUNCTION
 # ============================================================
-
 def ask_question(
     question: str,
     document_id: str,
+    ingestion_version: str,
     retrieval_limit: int = RETRIEVAL_LIMIT,
     final_top_k: int = FINAL_TOP_K,
 ) -> dict[str, Any]:
@@ -313,10 +314,15 @@ def ask_question(
         raise ValueError(
             "document_id is required."
         )
+    if not ingestion_version or not ingestion_version.strip():
+
+        raise ValueError(
+        "ingestion_version is required."
+    )
 
     question = question.strip()
-
     document_id = document_id.strip()
+    ingestion_version = ingestion_version.strip()
 
     retrieval_limit = max(
         1,
@@ -345,6 +351,10 @@ def ask_question(
     )
 
     print(
+    f"Ingestion Version : {ingestion_version}"
+    )
+
+    print(
         f"Question    : {question}"
     )
 
@@ -360,23 +370,18 @@ def ask_question(
     # STEP 1 - HYBRID RETRIEVAL
     # ========================================================
 
-    print(
-        "\n[1/4] Hybrid BGE-M3 retrieval..."
-    )
-
+    print("\n[1/4] Hybrid BGE-M3 retrieval...")
     retrieved_documents = hybrid_search(
-        query=question,
-
-        document_id=document_id,
-
-        retrieval_limit=retrieval_limit,
+    query=question,
+    document_id=document_id,
+    ingestion_version=ingestion_version,
+    retrieval_limit=retrieval_limit,
     )
-
     print(
         f"Retrieved candidates: "
         f"{len(retrieved_documents)}"
     )
-
+    
     # --------------------------------------------------------
     # No retrieval results
     # --------------------------------------------------------
@@ -387,8 +392,19 @@ def ask_question(
             "No document chunks were retrieved."
         )
 
+        print(
+            "Using General Knowledge fallback."
+        )
+
+        answer = generate_answer(
+            question=question,
+            documents=[],
+        )
+
         return {
-            "answer": NOT_FOUND_MESSAGE,
+            "answer": answer,
+
+            "answer_type": GENERAL_KNOWLEDGE_ANSWER_TYPE,
 
             "sources": [],
 
@@ -651,12 +667,9 @@ def ask_question(
             "Gemini returned an empty answer."
         )
 
+    
     # ========================================================
     # NO-SOURCE CASE
-    # ========================================================
-    # If Gemini determines that the answer is not present
-    # in the uploaded document, do not display unrelated
-    # retrieved pages as sources.
     # ========================================================
 
     if answer.lower().strip().rstrip(".") == (
@@ -664,20 +677,32 @@ def ask_question(
     ):
 
         print(
-            "\nAnswer is NOT grounded in the uploaded document."
+            "\nDocument context was insufficient."
         )
 
         print(
-            "Hiding retrieved sources from the UI."
+            "Using General Knowledge fallback."
+        )
+
+        # Generate answer using general knowledge
+        answer = generate_answer(
+            question=question,
+            documents=[],
         )
 
         return {
             "answer": answer,
+
+            "answer_type": GENERAL_KNOWLEDGE_ANSWER_TYPE,
+
             "sources": [],
+
             "document_id": document_id,
+
             "retrieved_count": len(
                 retrieved_documents
             ),
+
             "context_count": len(
                 reranked_documents
             ),
@@ -703,15 +728,21 @@ def ask_question(
     # ========================================================
 
     result = {
-        "answer": answer,
+    "answer": answer,
 
-        "sources": sources,
+    "answer_type": DOCUMENT_ANSWER_TYPE,
 
-        "document_id": document_id,
+    "sources": sources,
 
-        "retrieved_count": len(retrieved_documents),
+    "document_id": document_id,
 
-        "context_count": len( reranked_documents),
+    "retrieved_count": len(
+        retrieved_documents
+    ),
+
+    "context_count": len(
+        reranked_documents
+    ),
     }
     print("\n" + "=" * 70)
     print("RAG PIPELINE COMPLETE")

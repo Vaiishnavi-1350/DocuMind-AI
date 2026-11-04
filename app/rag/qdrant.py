@@ -159,7 +159,44 @@ def build_document_filter(
         ]
     )
 
+# ============================================================
+# DOCUMENT VERSION FILTER
+# ============================================================
+def build_document_version_filter(
+    document_id: str,
+    ingestion_version: str,
+) -> Filter:
+    """
+    Filter chunks belonging to one document
+    and one specific ingestion version.
+    """
 
+    if not document_id:
+        raise ValueError(
+            "document_id is required."
+        )
+
+    if not ingestion_version:
+        raise ValueError(
+            "ingestion_version is required."
+        )
+
+    return Filter(
+        must=[
+            FieldCondition(
+                key="document_id",
+                match=MatchValue(
+                    value=document_id
+                ),
+            ),
+            FieldCondition(
+                key="ingestion_version",
+                match=MatchValue(
+                    value=ingestion_version
+                ),
+            ),
+        ]
+    )
 # ============================================================
 # DELETE DOCUMENT
 # ============================================================
@@ -190,26 +227,56 @@ def delete_document(
         f"{document_id}"
     )
 
+# ============================================================
+# DELETE DOCUMENT VERSION
+# ============================================================
+def delete_document_version(
+    document_id: str,
+    ingestion_version: str,
+) -> None:
+    """
+    Delete only chunks belonging to a specific
+    ingestion version.
 
+    Other versions of the document remain untouched.
+    """
+
+    if not document_id or not ingestion_version:
+        return
+
+    if not client.collection_exists(
+        COLLECTION_NAME
+    ):
+        return
+
+    client.delete(
+        collection_name=COLLECTION_NAME,
+        points_selector=build_document_version_filter(
+            document_id,
+            ingestion_version,
+        ),
+        wait=True,
+    )
+
+    print(
+        "Deleted document version:",
+        document_id,
+        ingestion_version,
+    )
 # ============================================================
 # UPSERT CHUNKS
 # ============================================================
-
 def upsert_chunks(
     embeddings: tuple[
         list[list[float]],
         list[dict[str, Any]],
     ]
     | list[list[float]],
-
     metadata: list[dict[str, Any]],
-
     document_id: str | None = None,
-
     filename: str = "",
-
     document_type: str = "pdf",
-
+    ingestion_version: str | None = None,
 ) -> int:
     """
     Store BGE-M3 dense + sparse embeddings in Qdrant.
@@ -321,31 +388,24 @@ def upsert_chunks(
     # ========================================================
 
     create_collection()
-
+    
     # ========================================================
-    # DELETE EXISTING DOCUMENT
-    #
-    # This makes re-uploading the same document_id safe.
+    # RESOLVE DOCUMENT ID AND INGESTION VERSION
     # ========================================================
 
     resolved_document_id = (
         document_id
+        or metadata[0].get("document_id")
     )
-
     if not resolved_document_id:
-
-        resolved_document_id = (
-            metadata[0].get(
-                "document_id"
-            )
+        raise ValueError(
+            "document_id is required."
         )
 
-    if resolved_document_id:
-
-        delete_document(
-            resolved_document_id
-        )
-
+    resolved_ingestion_version = (
+        ingestion_version
+        or str(uuid.uuid4())
+    )   
     # ========================================================
     # BUILD POINTS
     # ========================================================
@@ -453,28 +513,20 @@ def upsert_chunks(
             item_metadata
         )
 
+        
         payload.update(
-
             {
                 "text": text,
-
-                "document_id":
-                    current_document_id,
-
-                "filename":
-                    current_filename,
-
-                "document_type":
-                    current_document_type,
-
-                "chunk_id":
-                    chunk_id,
-
-                "page":
-                    page,
+                "document_id": current_document_id,
+                "filename": current_filename,
+                "document_type": current_document_type,
+                "chunk_id": chunk_id,
+                "page": page,
+                "ingestion_version": (
+                    resolved_ingestion_version
+                ),
             }
         )
-
         # ----------------------------------------------------
         # SPARSE VECTOR
         # ----------------------------------------------------
@@ -597,7 +649,6 @@ def upsert_chunks(
 
     return len(points)
 
-
 # ============================================================
 # DENSE SEARCH
 # ============================================================
@@ -606,35 +657,33 @@ def search_dense(
     query_vector: list[float],
     limit: int = 10,
     document_id: str | None = None,
+    ingestion_version: str | None = None,
 ):
 
     if not document_id:
-
         raise ValueError(
             "document_id is required."
         )
 
     create_collection()
 
+    query_filter = (
+        build_document_version_filter(
+            document_id,
+            ingestion_version,
+        )
+        if ingestion_version
+        else build_document_filter(
+            document_id
+        )
+    )
+
     results = client.query_points(
-
-        collection_name=
-            COLLECTION_NAME,
-
+        collection_name=COLLECTION_NAME,
         query=query_vector,
-
         using="dense",
-
-        query_filter=
-            build_document_filter(
-                document_id
-            ),
-
-        limit=max(
-            1,
-            int(limit)
-        ),
-
+        query_filter=query_filter,
+        limit=max(1, int(limit)),
         with_payload=True,
     )
 
@@ -649,10 +698,10 @@ def search_sparse(
     query_vector: dict[str, Any],
     limit: int = 10,
     document_id: str | None = None,
+    ingestion_version: str | None = None,
 ):
 
     if not document_id:
-
         raise ValueError(
             "document_id is required."
         )
@@ -663,58 +712,55 @@ def search_sparse(
     # Convert dictionary into Qdrant SparseVector
     # --------------------------------------------------------
 
-    if isinstance(
-        query_vector,
-        dict
-    ):
+    if isinstance(query_vector, dict):
 
         sparse_query = SparseVector(
-
             indices=[
                 int(value)
                 for value in query_vector.get(
-                    "indices",
-                    []
+                    "indices", []
                 )
             ],
-
             values=[
                 float(value)
                 for value in query_vector.get(
-                    "values",
-                    []
+                    "values", []
                 )
             ],
         )
 
     else:
-
         sparse_query = query_vector
 
+    # --------------------------------------------------------
+    # DOCUMENT FILTER
+    # --------------------------------------------------------
+
+    query_filter = (
+        build_document_version_filter(
+            document_id,
+            ingestion_version,
+        )
+        if ingestion_version
+        else build_document_filter(
+            document_id
+        )
+    )
+
+    # --------------------------------------------------------
+    # SEARCH
+    # --------------------------------------------------------
+
     results = client.query_points(
-
-        collection_name=
-            COLLECTION_NAME,
-
+        collection_name=COLLECTION_NAME,
         query=sparse_query,
-
         using="sparse",
-
-        query_filter=
-            build_document_filter(
-                document_id
-            ),
-
-        limit=max(
-            1,
-            int(limit)
-        ),
-
+        query_filter=query_filter,
+        limit=max(1, int(limit)),
         with_payload=True,
     )
 
     return results.points
-
 
 # ============================================================
 # RESET COLLECTION
