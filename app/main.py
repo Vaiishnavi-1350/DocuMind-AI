@@ -17,7 +17,7 @@
 #   |
 #   +-- Document Upload
 #   |      |
-#   |      +-- PDF
+#   |      +-- Document
 #   |      +-- Ingestion
 #   |      +-- BGE-M3
 #   |      +-- Qdrant
@@ -74,13 +74,12 @@ from app.auth.security import (
     create_access_token,
     decode_access_token,
 )
-
-from app.rag.ingest import ingest_pdf
+from app.rag.ingest import ingest_document
 from app.rag.qdrant import (
     delete_document as delete_qdrant_document,
 )
 from app.rag.pipeline import ask_question
-
+from app.rag.document_extractor import SUPPORTED_FORMATS
 
 # ============================================================
 # LOGGING
@@ -309,7 +308,25 @@ def check_subscription_active(
             user.id,
             user.subscription_expires_at,
         )
+    # ========================================================
+    # FREE PLAN ACCESS
+    # ========================================================
 
+    if user.plan == "free":
+
+        # Free plan does not expire
+        user.subscription_status = "active"
+
+        user.subscription_expires_at = None
+
+        # Free plan limits
+        user.question_limit = 20
+
+        user.document_limit = 3
+
+        user.max_file_size_mb = 5
+
+        db.commit()
     # --------------------------------------------------------
     # NORMAL ACTIVE CHECK
     # --------------------------------------------------------
@@ -1949,23 +1966,26 @@ async def upload_document(
             status_code=400,
             detail="Filename is missing.",
         )
+    # ========================================================
+    # VALIDATE FILE FORMAT
+    # ========================================================
 
-    if not file.filename.lower().endswith(".pdf"):
+    file_extension = Path(
+        file.filename
+    ).suffix.lower()
+
+    if file_extension not in SUPPORTED_FORMATS:
 
         raise HTTPException(
             status_code=400,
-            detail="Only PDF files are supported.",
+            detail=(
+                "Unsupported file format. "
+                "Supported formats: "
+                + ", ".join(sorted(SUPPORTED_FORMATS))
+            )
         )
-
-    document_id = str(
-        uuid.uuid4()
-    )
-
-    file_path = (
-        UPLOAD_DIR
-        / f"{document_id}.pdf"
-    )
-
+    document_id = str(uuid.uuid4())
+    file_path = UPLOAD_DIR / (f"{document_id}{file_extension}")
     logger.info(
         "Document upload started. "
         "user_id=%s document_id=%s filename=%s",
@@ -2002,7 +2022,7 @@ async def upload_document(
                 detail=(
                     f"File is too large. "
                     f"Your {user.plan} plan allows "
-                    f"{user.max_file_size_mb} MB per PDF."
+                    f"{user.max_file_size_mb} MB per document."
                 ),
             )
 
@@ -2010,11 +2030,11 @@ async def upload_document(
 
             raise HTTPException(
                 status_code=400,
-                detail="The uploaded PDF is empty.",
+                detail="The uploaded document is empty.",
             )
 
         # ====================================================
-        # SAVE PDF
+        # SAVE Document
         # ====================================================
 
         with open(
@@ -2026,11 +2046,11 @@ async def upload_document(
                 file.file,
                 buffer,
             )
-
-        logger.info(
-            "PDF saved successfully. "
-            "document_id=%s size=%s bytes",
+            logger.info(
+            "Document saved successfully. "
+            "document_id=%s filename=%s size=%s bytes",
             document_id,
+            file.filename,
             file_size,
         )
 
@@ -2043,9 +2063,9 @@ async def upload_document(
             file.filename,
         )
 
-        ingestion_result = ingest_pdf(
+        ingestion_result = ingest_document(
 
-            pdf_path=file_path,
+            file_path=file_path,
 
             document_id=document_id,
 
@@ -2070,16 +2090,9 @@ async def upload_document(
         )
 
         if pages <= 0:
-
-            raise ValueError(
-                "No readable pages were found in the PDF."
-            )
-
+            raise ValueError("No readable content was found in the document.")
         if chunks <= 0:
-
-            raise ValueError(
-                "No text chunks were generated from the PDF."
-            )
+            raise ValueError("No text chunks were generated from the document.")
 
         # ====================================================
         # SAVE DATABASE RECORD
@@ -2098,6 +2111,8 @@ async def upload_document(
             pages=pages,
 
             chunks=chunks,
+
+            active_ingestion_version=ingestion_result["ingestion_version"],
 
             status="ready",
         )
@@ -2189,7 +2204,7 @@ async def upload_document(
                 file_path.unlink()
 
                 logger.info(
-                    "Uploaded PDF removed after failure. "
+                    "Uploaded document removed after failure. "
                     "document_id=%s",
                     document_id,
                 )
@@ -2197,7 +2212,7 @@ async def upload_document(
             except Exception:
 
                 logger.exception(
-                    "Failed to remove uploaded PDF. "
+                    "Failed to remove uploaded document. "
                     "document_id=%s",
                     document_id,
                 )
@@ -2244,7 +2259,7 @@ async def upload_document(
             )
 
         # ====================================================
-        # PDF CLEANUP
+        # Document CLEANUP
         # ====================================================
 
         if file_path.exists():
@@ -2256,7 +2271,7 @@ async def upload_document(
             except Exception:
 
                 logger.exception(
-                    "Failed to remove uploaded PDF after "
+                    "Failed to remove uploaded document after "
                     "unexpected error. document_id=%s",
                     document_id,
                 )
@@ -2400,7 +2415,7 @@ def delete_document(
         )
 
         # ====================================================
-        # PDF
+        # DOCUMENT FILE
         # ====================================================
 
         file_path = Path(
@@ -2597,6 +2612,25 @@ def chat_with_document(
             status_code=404,
             detail="Document not found.",
         )
+    # ========================================================
+    # ACTIVE INGESTION VERSION VALIDATION
+    # ========================================================
+
+    if not document.active_ingestion_version:
+
+        logger.warning(
+            "Document has no active ingestion version. "
+            "document_id=%s",
+            document_id,
+        )
+
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                "Document has no active ingestion version. "
+                "Please re-upload or reprocess the document."
+            ),
+        )
 
     logger.info(
         "RAG question started. "
@@ -2616,10 +2650,9 @@ def chat_with_document(
                 question,
                 )
         result = ask_question(
-
             question=question,
-
             document_id=document_id,
+            ingestion_version=document.active_ingestion_version,
         )
         logger.info(
         "CHAT REQUEST COMPLETE | document_id=%s | retrieved=%s | context=%s | sources=%s",

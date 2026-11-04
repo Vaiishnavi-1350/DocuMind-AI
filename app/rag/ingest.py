@@ -1,9 +1,11 @@
+
 # ============================================================
-# DOCUMIND AI - PDF INGESTION
+# DOCUMIND AI - MULTI-FORMAT DOCUMENT INGESTION
 #
-# PDF
-#  ↓
-# PyPDFLoader
+# Supported:
+# PDF, TXT, JSON, DOCX, CSV, SQL, JPG, JPEG, PNG
+#
+# Document
 #  ↓
 # Text extraction
 #  ↓
@@ -18,6 +20,9 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
+import uuid
+
+from langchain_core.documents import Document
 
 from langchain_community.document_loaders import (
     PyPDFLoader,
@@ -27,11 +32,12 @@ from langchain_text_splitters import (
     RecursiveCharacterTextSplitter,
 )
 
+from .document_extractor import extract_document
+
 from .embeddings import embed_documents
 
 from .qdrant import (
     ensure_collection,
-    delete_document,
     upsert_chunks,
 )
 
@@ -43,47 +49,27 @@ from .qdrant import (
 CHUNK_SIZE = 700
 CHUNK_OVERLAP = 200
 
+
 # ============================================================
-# PDF INGESTION
+# MULTI-FORMAT DOCUMENT INGESTION
 # ============================================================
 
-def ingest_pdf(
-    pdf_path: str | Path,
+def ingest_document(
+    file_path: str | Path,
     document_id: str,
     filename: str | None = None,
 ) -> dict[str, Any]:
-    """
-    Ingest one PDF into the new unified BGE-M3 + Qdrant RAG.
-
-    Flow:
-
-        PDF
-         ↓
-        PyPDFLoader
-         ↓
-        text extraction
-         ↓
-        chunking
-         ↓
-        BGE-M3
-         ↓
-        dense + sparse embeddings
-         ↓
-        Qdrant
-    """
 
     # ========================================================
     # VALIDATION
     # ========================================================
 
-    pdf_path = Path(
-        pdf_path
-    )
+    file_path = Path(file_path)
 
-    if not pdf_path.exists():
+    if not file_path.exists():
 
         raise FileNotFoundError(
-            f"PDF file not found: {pdf_path}"
+            f"Document file not found: {file_path}"
         )
 
     if not document_id:
@@ -98,7 +84,19 @@ def ingest_pdf(
 
     display_filename = (
         filename
-        or pdf_path.name
+        or file_path.name
+    )
+
+    document_type = (
+        file_path.suffix.lower().replace(".", "")
+    )
+
+    # ========================================================
+    # INGESTION VERSION
+    # ========================================================
+
+    ingestion_version = str(
+        uuid.uuid4()
     )
 
     # ========================================================
@@ -108,7 +106,7 @@ def ingest_pdf(
     print("\n" + "=" * 70)
 
     print(
-        "DOCUMIND AI - PDF INGESTION"
+        "DOCUMIND AI - DOCUMENT INGESTION"
     )
 
     print("=" * 70)
@@ -121,60 +119,103 @@ def ingest_pdf(
         f"Document ID : {document_id}"
     )
 
+    print(
+        f"File type  : {document_type}"
+    )
+
     # ========================================================
-    # STEP 1 - LOAD PDF
+    # STEP 1 - EXTRACT DOCUMENT TEXT
     # ========================================================
 
     print(
-        "\n[1/4] Loading PDF..."
+        "\n[1/4] Extracting document text..."
     )
 
-    loader = PyPDFLoader(
-        str(pdf_path)
-    )
+    # --------------------------------------------------------
+    # PDF
+    #
+    # Keep PyPDFLoader for PDFs because it preserves
+    # page-level metadata.
+    # --------------------------------------------------------
 
-    documents = loader.load()
+    if document_type == "pdf":
 
-    if not documents:
-
-        raise ValueError(
-            "No text could be extracted "
-            "from the PDF."
+        loader = PyPDFLoader(
+            str(file_path)
         )
 
+        documents = loader.load()
+
+        if not documents:
+
+            raise ValueError(
+                "No text could be extracted from the PDF."
+            )
+
+        pages = len(documents)
+
+    # --------------------------------------------------------
+    # Other supported formats
+    # --------------------------------------------------------
+
+    else:
+
+        extracted = extract_document(
+            file_path
+        )
+
+        extracted_text = str(
+            extracted.get("text")
+            or ""
+        ).strip()
+
+        if not extracted_text:
+
+            raise ValueError(
+                "No text could be extracted from the document."
+            )
+
+        pages = int(
+            extracted.get("pages")
+            or 0
+        )
+
+        documents = [
+            Document(
+                page_content=extracted_text,
+                metadata={
+                    "source": str(file_path),
+                    "document_type": document_type,
+                },
+            )
+        ]
+
     print(
-        f"Pages extracted: "
-        f"{len(documents)}"
+        f"Pages extracted: {pages}"
     )
 
     # ========================================================
-    # STEP 2 - SPLIT PDF
+    # STEP 2 - SPLIT DOCUMENT
     # ========================================================
 
     print(
         "\n[2/4] Splitting document..."
     )
 
-    splitter = (
-        RecursiveCharacterTextSplitter(
-            chunk_size=CHUNK_SIZE,
-
-            chunk_overlap=CHUNK_OVERLAP,
-
-            separators=[
-                "\n\n",
-                "\n",
-                ". ",
-                " ",
-                "",
-            ],
-        )
+    splitter = RecursiveCharacterTextSplitter(
+        chunk_size=CHUNK_SIZE,
+        chunk_overlap=CHUNK_OVERLAP,
+        separators=[
+            "\n\n",
+            "\n",
+            ". ",
+            " ",
+            "",
+        ],
     )
 
-    chunks = (
-        splitter.split_documents(
-            documents
-        )
+    chunks = splitter.split_documents(
+        documents
     )
 
     if not chunks:
@@ -184,8 +225,7 @@ def ingest_pdf(
         )
 
     print(
-        f"Chunks created: "
-        f"{len(chunks)}"
+        f"Chunks created: {len(chunks)}"
     )
 
     # ========================================================
@@ -198,13 +238,9 @@ def ingest_pdf(
 
     texts: list[str] = []
 
-    metadata: list[
-        dict[str, Any]
-    ] = []
+    metadata: list[dict[str, Any]] = []
 
-    for index, chunk in enumerate(
-        chunks
-    ):
+    for index, chunk in enumerate(chunks):
 
         text = str(
             chunk.page_content
@@ -216,29 +252,30 @@ def ingest_pdf(
         # ----------------------------------------------------
 
         if not text:
+
             continue
 
         # ----------------------------------------------------
         # Page number
         #
-        # PyPDFLoader page index:
+        # PDF page index:
         #     0, 1, 2, ...
         #
         # UI page number:
         #     1, 2, 3, ...
+        #
+        # Non-PDF formats:
+        #     None
         # ----------------------------------------------------
 
-        page_number = (
-            chunk.metadata.get(
-                "page"
-            )
+        page_number = chunk.metadata.get(
+            "page"
         )
 
         if page_number is not None:
 
             page_number = (
-                int(page_number)
-                + 1
+                int(page_number) + 1
             )
 
         # ----------------------------------------------------
@@ -264,20 +301,15 @@ def ingest_pdf(
 
         metadata.append(
             {
-                "document_id":
-                    document_id,
+                "document_id": document_id,
 
-                "filename":
-                    display_filename,
+                "filename": display_filename,
 
-                "page":
-                    page_number,
+                "page": page_number,
 
-                "chunk_id":
-                    chunk_id,
+                "chunk_id": chunk_id,
 
-                "text":
-                    text,
+                "text": text,
             }
         )
 
@@ -288,13 +320,11 @@ def ingest_pdf(
     if not texts:
 
         raise ValueError(
-            "The PDF contains no "
-            "usable text."
+            "The document contains no usable text."
         )
 
     print(
-        f"Usable chunks: "
-        f"{len(texts)}"
+        f"Usable chunks: {len(texts)}"
     )
 
     # ========================================================
@@ -310,66 +340,55 @@ def ingest_pdf(
         texts
     )
 
-    dense_vectors, sparse_vectors = (
-        embeddings
+    dense_vectors, sparse_vectors = embeddings
+
+    print(
+        f"Dense vectors : {len(dense_vectors)}"
     )
 
     print(
-        f"Dense vectors : "
-        f"{len(dense_vectors)}"
-    )
-
-    print(
-        f"Sparse vectors: "
-        f"{len(sparse_vectors)}"
+        f"Sparse vectors: {len(sparse_vectors)}"
     )
 
     # ========================================================
     # QDRANT
     # ========================================================
 
-    print(
-        "\nStoring chunks in Qdrant..."
-    )
+    print("\nStoring chunks in Qdrant...")
 
     ensure_collection()
 
     # --------------------------------------------------------
-    # Remove existing chunks belonging to this document ID.
-    #
-    # This prevents duplicate chunks when the same PDF is
-    # uploaded again with the same document_id.
+    # Insert versioned chunks
     # --------------------------------------------------------
 
-    delete_document(
-        document_id
+    inserted_count = upsert_chunks(
+        embeddings=(
+            dense_vectors,
+            sparse_vectors,
+        ),
+
+        metadata=metadata,
+
+        document_id=document_id,
+
+        filename=display_filename,
+
+        document_type=document_type,
+
+        ingestion_version=ingestion_version,
     )
 
-    # --------------------------------------------------------
-    # Insert new chunks
-    # --------------------------------------------------------
-    inserted_count = upsert_chunks(
-    embeddings=(
-        dense_vectors,
-        sparse_vectors,
-    ),
-
-    metadata=metadata,
-
-    document_id=document_id,
-
-    filename=display_filename,
-
-    document_type="pdf",
-)
-    
     # ========================================================
     # COMPLETE
     # ========================================================
 
     print(
-        f"\nStored chunks in Qdrant: "
-        f"{inserted_count}"
+        f"\nStored chunks in Qdrant: {inserted_count}"
+    )
+
+    print(
+        f"Ingestion version: {ingestion_version}"
     )
 
     print(
@@ -377,21 +396,35 @@ def ingest_pdf(
     )
 
     print(
-        "PDF INGESTION COMPLETE"
+        "DOCUMENT INGESTION COMPLETE"
     )
 
     print("=" * 70)
 
     return {
-        "document_id":
-            document_id,
+        "document_id": document_id,
 
-        "filename":
-            display_filename,
+        "filename": display_filename,
 
-        "pages":
-            len(documents),
+        "pages": pages,
 
-        "chunks":
-            inserted_count,
+        "chunks": inserted_count,
+
+        "ingestion_version": ingestion_version,
     }
+
+# ============================================================
+# PDF INGESTION - BACKWARD COMPATIBILITY
+# ============================================================
+
+def ingest_pdf(
+    pdf_path: str | Path,
+    document_id: str,
+    filename: str | None = None,
+) -> dict[str, Any]:
+
+    return ingest_document(
+        file_path=pdf_path,
+        document_id=document_id,
+        filename=filename,
+    )

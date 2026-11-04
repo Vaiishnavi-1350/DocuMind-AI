@@ -237,121 +237,47 @@ def _rrf_merge(
     return results[
         :top_k
     ]
-
-
 # ============================================================
 # HYBRID SEARCH
 # ============================================================
-
 def hybrid_search(
     query: str,
     document_id: str,
     retrieval_limit: int = 10,
-) -> list[dict]:
+    ingestion_version: str | None = None,
+):
     """
-    Hybrid document retrieval.
+    Perform version-aware hybrid retrieval.
 
-    Flow:
-
-        User question
-              ↓
-        BGE-M3
-              ↓
-       ┌──────┴──────┐
-       ↓             ↓
-     Dense         Sparse
-       ↓             ↓
-       └──────┬──────┘
-              ↓
-           Qdrant
-              ↓
-       document_id filter
-              ↓
-             RRF
-              ↓
-       top candidates
+    Uses:
+    1. Dense search
+    2. Sparse search
+    3. Reciprocal Rank Fusion (RRF)
     """
 
-    # --------------------------------------------------------
-    # Validate query
-    # --------------------------------------------------------
+    # Generate query embeddings
+    dense_vector, sparse_vector = embed_query(query)
 
-    if not query or not query.strip():
-        return []
-
-    if not document_id:
-        raise ValueError(
-            "document_id is required "
-            "for retrieval."
-        )
-
-    query = query.strip()
-
-    # --------------------------------------------------------
-    # Generate both BGE-M3 query vectors
-    # --------------------------------------------------------
-
-    print(
-        "\nGenerating BGE-M3 query embeddings..."
-    )
-
-    dense_vector, sparse_vector = (
-        embed_query(
-            query
-        )
-    )
-
-    # --------------------------------------------------------
     # Dense retrieval
-    # --------------------------------------------------------
-
-    print(
-        "Running dense retrieval..."
-    )
-
     dense_results = search_dense(
         query_vector=dense_vector,
         document_id=document_id,
+        ingestion_version=ingestion_version,
         limit=retrieval_limit,
     )
 
-    print(
-        f"Dense results: "
-        f"{len(dense_results)}"
-    )
-
-    # --------------------------------------------------------
     # Sparse retrieval
-    # --------------------------------------------------------
-
-    print(
-        "Running sparse retrieval..."
-    )
-
     sparse_results = search_sparse(
         query_vector=sparse_vector,
         document_id=document_id,
+        ingestion_version=ingestion_version,
         limit=retrieval_limit,
     )
 
-    print(
-        f"Sparse results: "
-        f"{len(sparse_results)}"
+    # Combine results using RRF
+    merged_results = _rrf_merge(
+        dense_results,
+        sparse_results,
     )
 
-    # --------------------------------------------------------
-    # RRF
-    # --------------------------------------------------------
-
-    results = _rrf_merge(
-        dense_results=dense_results,
-        sparse_results=sparse_results,
-        top_k=retrieval_limit,
-    )
-
-    print(
-        f"Hybrid results after RRF: "
-        f"{len(results)}"
-    )
-
-    return results
+    return merged_results[:retrieval_limit]

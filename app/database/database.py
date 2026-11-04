@@ -190,6 +190,13 @@ class Document(Base):
         nullable=False
     )
 
+    document_type = Column(
+    String,
+    nullable=False,
+    default="pdf",
+    server_default="pdf"
+    )
+
     file_path = Column(
         String,
         nullable=False
@@ -208,6 +215,11 @@ class Document(Base):
     status = Column(
         String,
         default="ready"
+    )
+
+    active_ingestion_version = Column(
+        String,
+        nullable=True,
     )
 
     created_at = Column(
@@ -412,7 +424,86 @@ def migrate_user_subscription_columns():
 
                 )
 
+# =========================================
+# DOCUMENT TYPE MIGRATION
+# =========================================
 
+def migrate_document_type_column():
+
+    inspector = inspect(engine)
+
+    if "documents" not in inspector.get_table_names():
+        return
+
+    existing_columns = {
+        column["name"]
+        for column in inspector.get_columns("documents")
+    }
+
+    if "document_type" not in existing_columns:
+
+        with engine.begin() as connection:
+
+            connection.execute(
+                text(
+                    """
+                    ALTER TABLE documents
+                    ADD COLUMN document_type
+                    VARCHAR NOT NULL DEFAULT 'pdf'
+                    """
+                )
+            )
+
+        print(
+            "Database migration completed: "
+            "documents.document_type added."
+        )
+# =========================================
+# INGESTION VERSION MIGRATION
+# =========================================
+def migrate_active_ingestion_version_column():
+
+    inspector = inspect(engine)
+
+    if "documents" not in inspector.get_table_names():
+        return
+
+    existing_columns = {
+        column["name"]
+        for column in inspector.get_columns("documents")
+    }
+
+    if "active_ingestion_version" not in existing_columns:
+
+        with engine.begin() as connection:
+
+            connection.execute(
+                text(
+                    """
+                    ALTER TABLE documents
+                    ADD COLUMN active_ingestion_version
+                    VARCHAR
+                    """
+                )
+            )
+
+        print(
+            "Database migration completed: "
+            "documents.active_ingestion_version added."
+        )
+
+
+# =========================================
+# RUN INGESTION VERSION MIGRATION
+# =========================================
+
+migrate_active_ingestion_version_column()
+
+# =========================================
+# RUN DOCUMENT MIGRATION
+# =========================================
+
+migrate_document_type_column()
 # =========================================
 # RUN MIGRATION
 # =========================================

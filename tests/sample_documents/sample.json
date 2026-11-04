@@ -1,0 +1,9 @@
+{
+  "project": "DocuMind AI",
+  "technology": [
+    "Python",
+    "FastAPI",
+    "Qdrant"
+  ],
+  "status": "development"
+}

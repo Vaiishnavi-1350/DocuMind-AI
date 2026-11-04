@@ -12918,3 +12918,45 @@ html[data-theme="dark"] #landingScreen .landing-nav {
         width: min(100% - 28px, 1180px);
     }
 }
+
+/* =========================================================
+   ANSWER TYPE LABEL
+   ========================================================= */
+
+.answer-type-label {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 4px;
+
+    padding: 8px 12px;
+    margin-bottom: 12px;
+
+    border-radius: 8px;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* General Knowledge Answer */
+
+.general-knowledge {
+    background: #e0f2fe;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+}
+
+/* Document Answer */
+
+.document-answer {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+/* Subtitle */
+
+.answer-type-label span {
+    font-size: 11px;
+    font-weight: 400;
+    opacity: 0.85;
+}
