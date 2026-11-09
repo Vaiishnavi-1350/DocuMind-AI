@@ -1,7 +1,7 @@
 from pathlib import Path
 import csv
 import json
-
+import shutil
 
 # ============================================================
 # SUPPORTED DOCUMENT FORMATS
@@ -202,6 +202,7 @@ def extract_sql(file_path: Path) -> str:
 # ============================================================
 # IMAGE OCR EXTRACTION
 # ============================================================
+
 def extract_image(file_path: Path) -> str:
 
     try:
@@ -213,17 +214,31 @@ def extract_image(file_path: Path) -> str:
             "Image OCR requires Pillow and pytesseract."
         )
 
-    # Configure the installed Tesseract executable
-    tesseract_path = (
-        r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-    )
+    # Find Tesseract executable using system PATH
+    tesseract_path = shutil.which("tesseract")
 
-    if not Path(tesseract_path).exists():
-        raise FileNotFoundError(
-            "Tesseract OCR executable was not found."
+    # Windows fallback
+    if not tesseract_path:
+
+        windows_tesseract = (
+            r"C:\Program Files\Tesseract-OCR\tesseract.exe"
         )
 
-    pytesseract.pytesseract.tesseract_cmd = tesseract_path
+        if Path(windows_tesseract).exists():
+            tesseract_path = windows_tesseract
+
+    # Verify executable
+    if not tesseract_path:
+
+        raise FileNotFoundError(
+            "Tesseract OCR executable was not found. "
+            "Install Tesseract and add it to PATH."
+        )
+
+    # Configure pytesseract
+    pytesseract.pytesseract.tesseract_cmd = (
+        tesseract_path
+    )
 
     try:
 
@@ -253,7 +268,6 @@ def extract_image(file_path: Path) -> str:
         )
 
     return text
-
 
 # ============================================================
 # PDF EXTRACTION
