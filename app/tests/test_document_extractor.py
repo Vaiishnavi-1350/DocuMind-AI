@@ -7,15 +7,13 @@ from docx import Document
 
 from app.rag.document_extractor import extract_document
 
-
 # ============================================================
 # TEST DIRECTORY
 # ============================================================
 
-TEST_DIR = Path("tests/sample_documents")
+TEST_DIR = Path("app/tests/sample_documents")
 
 TEST_DIR.mkdir(parents=True, exist_ok=True)
-
 
 # ============================================================
 # CREATE SAMPLE TXT

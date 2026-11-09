@@ -2655,7 +2655,10 @@ def chat_with_document(
             ingestion_version=document.active_ingestion_version,
         )
         logger.info(
-        "CHAT REQUEST COMPLETE | document_id=%s | retrieved=%s | context=%s | sources=%s",
+            (
+                "CHAT REQUEST COMPLETE | document_id=%s | "
+                "retrieved=%s | context=%s | sources=%s"
+            ),
         document_id,
         result.get("retrieved_count", 0),
         result.get("context_count", 0),
