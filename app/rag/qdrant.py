@@ -29,6 +29,7 @@ from qdrant_client.models import (
 )
 from app.config import (
     QDRANT_URL,
+    QDRANT_API_KEY,
     QDRANT_COLLECTION_NAME,
     QDRANT_UPSERT_BATCH_SIZE,
 )
@@ -44,7 +45,10 @@ UPSERT_BATCH_SIZE = QDRANT_UPSERT_BATCH_SIZE
 # CLIENT
 # ============================================================
 
-client = QdrantClient(url=QDRANT_URL)
+client = QdrantClient(
+    url=QDRANT_URL,
+    api_key=QDRANT_API_KEY,
+)
 
 # ============================================================
 # CREATE COLLECTION

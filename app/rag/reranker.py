@@ -51,6 +51,7 @@ def get_reranker() -> CrossEncoder:
         _model = CrossEncoder(
             MODEL_NAME,
             max_length=RERANKER_MAX_LENGTH,
+             device="cpu",
         )
 
         print(

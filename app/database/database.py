@@ -8,22 +8,20 @@ from sqlalchemy import (
     inspect,
     text,
 )
-
 from sqlalchemy.orm import (
     declarative_base,
     sessionmaker,
 )
-
 from datetime import datetime
-
 from pathlib import Path
-
 
 # =========================================
 # DATABASE DIRECTORY
 # =========================================
 
-DATABASE_DIR = Path("data")
+BASE_DIR = Path(__file__).resolve().parents[2]
+
+DATABASE_DIR = BASE_DIR / "data"
 
 DATABASE_DIR.mkdir(
     parents=True,
@@ -35,10 +33,9 @@ DATABASE_DIR.mkdir(
 # DATABASE URL
 # =========================================
 
-DATABASE_URL = (
-    "sqlite:///./data/documind.db"
-)
+DATABASE_PATH = DATABASE_DIR / "documind.db"
 
+DATABASE_URL = f"sqlite:///{DATABASE_PATH.as_posix()}"
 
 # =========================================
 # DATABASE ENGINE
@@ -494,20 +491,15 @@ def migrate_active_ingestion_version_column():
 
 
 # =========================================
-# RUN INGESTION VERSION MIGRATION
+# RUN DATABASE MIGRATIONS
 # =========================================
+
+migrate_user_subscription_columns()
+
+migrate_document_type_column()
 
 migrate_active_ingestion_version_column()
 
-# =========================================
-# RUN DOCUMENT MIGRATION
-# =========================================
-
-migrate_document_type_column()
-# =========================================
-# RUN MIGRATION
-# =========================================
-migrate_user_subscription_columns()
 # =========================================
 # DATABASE DEPENDENCY
 # =========================================

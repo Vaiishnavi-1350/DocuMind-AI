@@ -41,7 +41,7 @@ import uuid
 
 from pathlib import Path
 from datetime import datetime, timedelta
-
+from app.config import UPLOAD_DIR
 from fastapi import (
     FastAPI,
     UploadFile,
@@ -167,21 +167,6 @@ def health():
         "status": "healthy"
     }
 
-
-# ============================================================
-# UPLOAD DIRECTORY
-# ============================================================
-
-UPLOAD_DIR = Path(
-    "data/uploads"
-)
-
-UPLOAD_DIR.mkdir(
-    parents=True,
-    exist_ok=True,
-)
-
-
 # ============================================================
 # OAUTH2
 # ============================================================
@@ -189,7 +174,6 @@ UPLOAD_DIR.mkdir(
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl="/api/auth/login"
 )
-
 
 # ============================================================
 # REQUEST MODELS
