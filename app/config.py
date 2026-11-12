@@ -86,6 +86,8 @@ QDRANT_URL = os.getenv(
     "http://localhost:6333"
 )
 
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY") or None
+
 QDRANT_COLLECTION_NAME = os.getenv(
     "QDRANT_COLLECTION_NAME",
     "documind_bge_m3"

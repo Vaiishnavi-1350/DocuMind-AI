@@ -1,0 +1,4 @@
+
+    DocuMind AI is an AI-powered document intelligence platform.
+    It uses BGE-M3 embeddings and Qdrant for document retrieval.
+    

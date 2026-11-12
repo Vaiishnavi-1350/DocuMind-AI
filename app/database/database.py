@@ -8,22 +8,20 @@ from sqlalchemy import (
     inspect,
     text,
 )
-
 from sqlalchemy.orm import (
     declarative_base,
     sessionmaker,
 )
-
 from datetime import datetime
-
 from pathlib import Path
-
 
 # =========================================
 # DATABASE DIRECTORY
 # =========================================
 
-DATABASE_DIR = Path("data")
+BASE_DIR = Path(__file__).resolve().parents[2]
+
+DATABASE_DIR = BASE_DIR / "data"
 
 DATABASE_DIR.mkdir(
     parents=True,
@@ -35,10 +33,9 @@ DATABASE_DIR.mkdir(
 # DATABASE URL
 # =========================================
 
-DATABASE_URL = (
-    "sqlite:///./data/documind.db"
-)
+DATABASE_PATH = DATABASE_DIR / "documind.db"
 
+DATABASE_URL = f"sqlite:///{DATABASE_PATH.as_posix()}"
 
 # =========================================
 # DATABASE ENGINE
@@ -190,6 +187,13 @@ class Document(Base):
         nullable=False
     )
 
+    document_type = Column(
+    String,
+    nullable=False,
+    default="pdf",
+    server_default="pdf"
+    )
+
     file_path = Column(
         String,
         nullable=False
@@ -208,6 +212,11 @@ class Document(Base):
     status = Column(
         String,
         default="ready"
+    )
+
+    active_ingestion_version = Column(
+        String,
+        nullable=True,
     )
 
     created_at = Column(
@@ -412,11 +421,85 @@ def migrate_user_subscription_columns():
 
                 )
 
+# =========================================
+# DOCUMENT TYPE MIGRATION
+# =========================================
+
+def migrate_document_type_column():
+
+    inspector = inspect(engine)
+
+    if "documents" not in inspector.get_table_names():
+        return
+
+    existing_columns = {
+        column["name"]
+        for column in inspector.get_columns("documents")
+    }
+
+    if "document_type" not in existing_columns:
+
+        with engine.begin() as connection:
+
+            connection.execute(
+                text(
+                    """
+                    ALTER TABLE documents
+                    ADD COLUMN document_type
+                    VARCHAR NOT NULL DEFAULT 'pdf'
+                    """
+                )
+            )
+
+        print(
+            "Database migration completed: "
+            "documents.document_type added."
+        )
+# =========================================
+# INGESTION VERSION MIGRATION
+# =========================================
+def migrate_active_ingestion_version_column():
+
+    inspector = inspect(engine)
+
+    if "documents" not in inspector.get_table_names():
+        return
+
+    existing_columns = {
+        column["name"]
+        for column in inspector.get_columns("documents")
+    }
+
+    if "active_ingestion_version" not in existing_columns:
+
+        with engine.begin() as connection:
+
+            connection.execute(
+                text(
+                    """
+                    ALTER TABLE documents
+                    ADD COLUMN active_ingestion_version
+                    VARCHAR
+                    """
+                )
+            )
+
+        print(
+            "Database migration completed: "
+            "documents.active_ingestion_version added."
+        )
+
 
 # =========================================
-# RUN MIGRATION
+# RUN DATABASE MIGRATIONS
 # =========================================
+
 migrate_user_subscription_columns()
+
+migrate_document_type_column()
+
+migrate_active_ingestion_version_column()
+
 # =========================================
 # DATABASE DEPENDENCY
 # =========================================

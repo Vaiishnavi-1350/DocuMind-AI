@@ -2580,25 +2580,73 @@ async function askDynamicQuestion() {
     }
 }
 
+ // =========================================================
+ // CHAT MESSAGE UI
+ // =========================================================
 
-// =========================================================
-// CHAT MESSAGE UI
-// =========================================================
 function createChatMessage(
     question,
     data
 ) {
+
+    // ---------------------------------------------------------
+    // GET ANSWER
+    // ---------------------------------------------------------
+
     let answer =
         data.answer || "";
 
     if (typeof answer !== "string") {
+
         answer =
             JSON.stringify(answer);
+
     }
 
-    // =========================================================
-    // AI PREFERENCES - SHOW SOURCES
-    // =========================================================
+    // ---------------------------------------------------------
+    // ANSWER TYPE LABEL
+    // ---------------------------------------------------------
+
+    let answerTypeHTML = "";
+
+    if (
+        data.answer_type === "general_knowledge"
+    ) {
+
+        answerTypeHTML = `
+            <div class="answer-type-label general-knowledge">
+
+                General Knowledge
+
+                <span>
+                    Not from uploaded document
+                </span>
+
+            </div>
+        `;
+
+    }
+    else if (
+        data.answer_type === "document"
+    ) {
+
+        answerTypeHTML = `
+            <div class="answer-type-label document-answer">
+
+                Document Answer
+
+                <span>
+                    Based on uploaded document
+                </span>
+
+            </div>
+        `;
+
+    }
+
+    // ---------------------------------------------------------
+    // SOURCES
+    // ---------------------------------------------------------
 
     let sourcesHTML = "";
 
@@ -2611,48 +2659,59 @@ function createChatMessage(
     if (
         shouldShowSources &&
         Array.isArray(data.sources) &&
-        data.sources.length
+        data.sources.length > 0
     ) {
 
         sourcesHTML = `
-        <div class="sources-area">
+            <div class="sources-area">
 
-            <span class="sources-title">
-                Sources
-            </span>
+                <span class="sources-title">
+                    Sources
+                </span>
 
-            <div class="sources-list">
+                <div class="sources-list">
 
-                ${data.sources.map(
-            source => {
+                    ${data.sources.map(
+                        source => {
 
-                const filename =
-                    source.filename ||
-                    "Uploaded document";
+                            const filename =
+                                source.filename ||
+                                "Uploaded document";
 
-                const page =
-                    source.page ??
-                    "Unknown";
+                            const page =
+                                source.page ??
+                                "Unknown";
 
-                return `
-                            <span class="source-badge">
-                                ${escapeHtml(filename)}
-                                • Page
-                                ${escapeHtml(
-                    String(page)
-                )}
-                            </span>
-                        `;
+                            return `
+                                <span class="source-badge">
 
-            }
-        ).join("")}
+                                    ${escapeHtml(filename)}
+
+                                    • Page
+
+                                    ${escapeHtml(
+                                        String(page)
+                                    )}
+
+                                </span>
+                            `;
+
+                        }
+                    ).join("")}
+
+                </div>
 
             </div>
+        `;
 
-        </div>
-    `;
     }
+
+    // ---------------------------------------------------------
+    // RETURN CHAT MESSAGE
+    // ---------------------------------------------------------
+
     return `
+
         <div class="chat-message user-message">
 
             <div class="message-label">
@@ -2660,24 +2719,26 @@ function createChatMessage(
             </div>
 
             <div class="message-bubble">
+
                 ${escapeHtml(question)}
+
             </div>
 
         </div>
-
         <div class="chat-message ai-message">
 
             <div class="message-label">
-                <span class="ai-mark">D</span>
+
+                <span class="ai-mark">
+                    D
+                </span>
                 DocuMind AI
             </div>
-
+            ${answerTypeHTML}
             <div class="answer-area">
                 ${formatAnswer(answer)}
             </div>
-
             ${sourcesHTML}
-
         </div>
     `;
 }
@@ -2701,28 +2762,49 @@ function displayAnswer(data, question) {
     // -----------------------------------------------------
     // GET ANSWER
     // -----------------------------------------------------
+    
+    let answer =
+        data.answer || "";
 
-    let answer = data.answer || "";
-
-    if (Array.isArray(answer)) {
-
-        answer = answer
-            .map(item => item.text || "")
-            .join("\n");
-
+    if (typeof answer !== "string") {
+        answer =
+            JSON.stringify(answer);
     }
+
+    // =========================================================
+    // ANSWER TYPE LABEL
+    // =========================================================
+
+    let answerTypeHTML = "";
 
     if (
-        typeof answer === "object" &&
-        answer !== null
+        data.answer_type === "general_knowledge"
     ) {
 
-        answer =
-            answer.text ||
-            JSON.stringify(answer);
+        answerTypeHTML = `
+            <div class="answer-type-label general-knowledge">
+                General Knowledge
+                <span>
+                    Not from uploaded document
+                </span>
+            </div>
+        `;
 
     }
+    else if (
+        data.answer_type === "document"
+    ) {
 
+        answerTypeHTML = `
+            <div class="answer-type-label document-answer">
+                Document Answer
+                <span>
+                    Based on uploaded document
+                </span>
+            </div>
+        `;
+
+    }
     // -----------------------------------------------------
     // CREATE USER MESSAGE
     // -----------------------------------------------------
@@ -7977,13 +8059,36 @@ function checkSubscriptionReminderNotifications({
                             return;
                         }
 
+                        // ========================================================
+                        // VALIDATE SUPPORTED FILE FORMATS
+                        // ========================================================
+
+                        const supportedExtensions = [
+                            ".pdf",
+                            ".txt",
+                            ".json",
+                            ".docx",
+                            ".csv",
+                            ".sql",
+                            ".jpg",
+                            ".jpeg",
+                            ".png"
+                        ];
+
+                        const fileExtension = file.name
+                            .toLowerCase()
+                            .substring(
+                                file.name.lastIndexOf(".")
+                            );
+
                         if (
-                            file.type !== "application/pdf" &&
-                            !file.name.toLowerCase().endsWith(".pdf")
+                            !supportedExtensions.includes(
+                                fileExtension
+                            )
                         ) {
 
                             showError(
-                                "Only PDF files are supported."
+                                "Unsupported file format. Please upload PDF, TXT, JSON, DOCX, CSV, SQL, JPG, JPEG, or PNG."
                             );
 
                             fileInput.value = "";
@@ -8069,14 +8174,36 @@ function checkSubscriptionReminderNotifications({
                                     return;
                                 }
 
+                                // ========================================================
+                                // VALIDATE DRAG & DROP FILE FORMAT
+                                // ========================================================
+
+                                const supportedExtensions = [
+                                    ".pdf",
+                                    ".txt",
+                                    ".json",
+                                    ".docx",
+                                    ".csv",
+                                    ".sql",
+                                    ".jpg",
+                                    ".jpeg",
+                                    ".png"
+                                ];
+
+                                const fileExtension = file.name
+                                    .toLowerCase()
+                                    .substring(
+                                        file.name.lastIndexOf(".")
+                                    );
+
                                 if (
-                                    !file.name
-                                        .toLowerCase()
-                                        .endsWith(".pdf")
+                                    !supportedExtensions.includes(
+                                        fileExtension
+                                    )
                                 ) {
 
                                     showError(
-                                        "Only PDF files are supported."
+                                        "Unsupported file format. Please upload PDF, TXT, JSON, DOCX, CSV, SQL, JPG, JPEG, or PNG."
                                     );
 
                                     return;
@@ -8129,16 +8256,10 @@ function checkSubscriptionReminderNotifications({
                         if (!requireAuthentication()) {
                             return;
                         }
-
                         if (!selectedFile) {
-
-                            showError(
-                                "Please select a PDF first."
-                            );
-
+                            showError("Please select a document first.");
                             return;
                         }
-
                         const formData =
                             new FormData();
 

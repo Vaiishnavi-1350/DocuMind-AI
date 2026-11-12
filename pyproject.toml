@@ -1,0 +1,14 @@
+[tool.ruff]
+line-length = 88
+target-version = "py310"
+exclude = [
+    "venv",
+    ".venv",
+    "app/tests/sample_documents",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+]
