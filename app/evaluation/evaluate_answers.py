@@ -12,15 +12,34 @@ import json
 import re
 import sqlite3
 from pathlib import Path
-
+from sqlalchemy.engine import make_url
+from app.config import DATABASE_URL as CONFIG_DATABASE_URL
 
 BASE_DIR = Path(__file__).resolve().parents[2]
-
 EVALUATION_DIR = BASE_DIR / "app" / "evaluation"
+
+# Use the centralized application database configuration.
+database_url = make_url(CONFIG_DATABASE_URL)
+
+if not database_url.drivername.startswith("sqlite"):
+    raise RuntimeError(
+        "Offline evaluation currently supports SQLite only."
+    )
+
+if not database_url.database or database_url.database == ":memory:":
+    raise RuntimeError(
+        "A persistent SQLite database path is required."
+    )
+
+DATABASE_PATH = Path(database_url.database)
+
+if not DATABASE_PATH.is_absolute():
+    DATABASE_PATH = BASE_DIR / DATABASE_PATH
+
+DATABASE_PATH = DATABASE_PATH.resolve()
+
 DATASET_PATH = EVALUATION_DIR / "dataset.json"
 HISTORY_PATH = EVALUATION_DIR / "documind_saved_history.json"
-
-DATABASE_PATH = BASE_DIR / "data" / "documind.db"
 
 REPORT_DIR = EVALUATION_DIR / "reports"
 OUTPUT_PATH = REPORT_DIR / "answer_evaluation_report.json"

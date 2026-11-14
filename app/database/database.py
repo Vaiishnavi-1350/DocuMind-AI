@@ -1,3 +1,5 @@
+from sqlalchemy.engine import make_url
+from app.config import DATABASE_URL as CONFIG_DATABASE_URL
 from sqlalchemy import (
     create_engine,
     Column,
@@ -15,41 +17,59 @@ from sqlalchemy.orm import (
 from datetime import datetime
 from pathlib import Path
 
+
 # =========================================
-# DATABASE DIRECTORY
+# DATABASE CONFIGURATION
 # =========================================
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 
-DATABASE_DIR = BASE_DIR / "data"
+DATABASE_URL = CONFIG_DATABASE_URL
 
-DATABASE_DIR.mkdir(
-    parents=True,
-    exist_ok=True
-)
+database_url = make_url(DATABASE_URL)
 
+# Create the directory automatically for SQLite.
+if database_url.drivername.startswith("sqlite"):
 
-# =========================================
-# DATABASE URL
-# =========================================
+    database_name = database_url.database
 
-DATABASE_PATH = DATABASE_DIR / "documind.db"
+    if database_name and database_name != ":memory:":
 
-DATABASE_URL = f"sqlite:///{DATABASE_PATH.as_posix()}"
+        DATABASE_PATH = Path(database_name)
+
+        if not DATABASE_PATH.is_absolute():
+            DATABASE_PATH = BASE_DIR / DATABASE_PATH
+
+        DATABASE_PATH.parent.mkdir(
+            parents=True,
+            exist_ok=True
+        )
+
+        database_url = database_url.set(
+            database=str(DATABASE_PATH)
+        )
+
+    else:
+        DATABASE_PATH = None
+
+else:
+    DATABASE_PATH = None
 
 # =========================================
 # DATABASE ENGINE
 # =========================================
 
-engine = create_engine(
+connect_args = {}
 
-    DATABASE_URL,
-
-    connect_args={
+if database_url.drivername.startswith("sqlite"):
+    connect_args = {
         "check_same_thread": False
     }
-)
 
+engine = create_engine(
+    database_url,
+    connect_args=connect_args
+)
 
 # =========================================
 # SESSION

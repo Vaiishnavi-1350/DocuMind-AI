@@ -41,7 +41,7 @@ import uuid
 
 from pathlib import Path
 from datetime import datetime, timedelta
-from app.config import UPLOAD_DIR
+from app.config import UPLOAD_DIR, CORS_ALLOW_ORIGINS
 from fastapi import (
     FastAPI,
     UploadFile,
@@ -127,20 +127,17 @@ app.mount(
     name="static",
 )
 
-
 # ============================================================
 # CORS
 # ============================================================
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=CORS_ALLOW_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
 # ============================================================
 # ROOT
 # ============================================================
