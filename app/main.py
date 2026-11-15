@@ -74,15 +74,9 @@ from app.auth.security import (
     create_access_token,
     decode_access_token,
 )
-from app.rag.ingest import (
-    ingest_document,
-    ingest_document_minilm,
-)
+from app.rag.ingest import ingest_document_minilm
 
-from app.rag.pipeline import (
-    ask_question,
-    ask_question_minilm,
-)
+from app.rag.pipeline import ask_question_minilm
 from app.rag.qdrant import (
     delete_document as delete_qdrant_document,
     create_minilm_collection,

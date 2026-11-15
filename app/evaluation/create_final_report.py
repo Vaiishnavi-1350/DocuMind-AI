@@ -25,7 +25,11 @@ SOURCE_FILES = {
     "answer_evaluation": "answer_evaluation_report.json",
 }
 def load_report(filename):
-    path = BASE_DIR / filename if filename == "minilm_evaluation_results.json" else REPORTS_DIR / filename
+    path = (
+        BASE_DIR / filename
+        if filename == "minilm_evaluation_results.json"
+        else REPORTS_DIR / filename
+    )
 
     if not path.exists():
         return {"available": False, "error": f"Report not found: {filename}"}

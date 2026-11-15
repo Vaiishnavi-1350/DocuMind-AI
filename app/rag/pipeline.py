@@ -917,7 +917,7 @@ def ask_question_minilm(
             "sources": [],
             "document_id": document_id,
             "retrieved_count": len(retrieved_documents),
-            "context_count": len(reranked_documents),
+            "context_count": len(context_documents),
         }
 
     # ========================================================
@@ -940,7 +940,7 @@ def ask_question_minilm(
         "sources": sources,
         "document_id": document_id,
         "retrieved_count": len(retrieved_documents),
-        "context_count": len(reranked_documents),
+        "context_count": len(context_documents),
     }
 
     print("\n" + "=" * 70)
