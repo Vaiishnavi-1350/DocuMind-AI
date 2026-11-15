@@ -68,7 +68,9 @@ if database_url.drivername.startswith("sqlite"):
 
 engine = create_engine(
     database_url,
-    connect_args=connect_args
+    connect_args=connect_args,
+    pool_pre_ping=True,
+    pool_recycle=300
 )
 
 # =========================================
