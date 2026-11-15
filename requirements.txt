@@ -45,6 +45,7 @@ pytesseract
 
 # Database
 SQLAlchemy==2.0.52
+psycopg2-binary
 
 # Authentication
 PyJWT==2.14.0
