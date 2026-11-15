@@ -321,8 +321,6 @@ At thresholds 0.20, 0.25, and 0.30, the experiment achieved:
 
 These results indicate that similarity-based filtering can help distinguish relevant and unrelated queries within the prepared evaluation dataset.
 
-**Important:** These metrics evaluate retrieval and query-filtering behavior, not the factual correctness, relevance, or quality of Gemini-generated answers. The experiments were performed without Gemini API calls and do not measure answer-generation performance.
----
 
 ### Evaluation Files
 
