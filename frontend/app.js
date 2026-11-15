@@ -173,8 +173,13 @@ function showLandingPage() {
 
 function showDashboard() {
 
+    // Hide public landing page
+    landingScreen.hidden = true;
+
+    // Hide authentication screen
     authScreen.hidden = true;
 
+    // Show application/dashboard
     app.hidden = false;
 
 }
@@ -8521,6 +8526,8 @@ function checkSubscriptionReminderNotifications({
 
                                 const page =
                                     item.dataset.page;
+                                // Remember the last visited page
+                            localStorage.setItem("lastVisitedPage", page);
 
                                 if (page === "dashboard") {
 
@@ -12156,10 +12163,16 @@ function checkSubscriptionReminderNotifications({
 
                     }
 
-                    document.addEventListener(
-                        "DOMContentLoaded",
-                        initializeApp
-                    );
+                    // Initialize whether DOM is still loading or already ready.
+                    if (document.readyState === "loading") {
+                        document.addEventListener(
+                            "DOMContentLoaded",
+                            initializeApp,
+                            { once: true }
+                        );
+                    } else {
+                        initializeApp();
+                    }
 
                     /* =========================================================
                        PHASE 8A
