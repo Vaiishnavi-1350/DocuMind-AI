@@ -34,13 +34,16 @@ from langchain_text_splitters import (
 
 from .document_extractor import extract_document
 
-from .embeddings import embed_documents
+from .embeddings import (
+    embed_documents,
+    embed_documents_minilm,
+)
 
 from .qdrant import (
     ensure_collection,
     upsert_chunks,
+    upsert_chunks_minilm,
 )
-
 
 # ============================================================
 # CHUNKING CONFIGURATION
@@ -428,3 +431,227 @@ def ingest_pdf(
         document_id=document_id,
         filename=filename,
     )
+
+# ============================================================
+# MINILM DOCUMENT INGESTION
+# ============================================================
+
+def ingest_document_minilm(
+    file_path: str,
+    document_id: str,
+    filename: str | None = None,
+) -> dict[str, Any]:
+    """
+    Ingest documents using MiniLM dense embeddings.
+
+    Supported formats:
+        PDF, TXT, JSON, DOCX, CSV, SQL,
+        JPG, JPEG, PNG
+
+    Stores vectors exclusively in:
+        documind_minilm_384
+    """
+
+    import os
+    import uuid
+
+    from pathlib import Path
+
+    from langchain_core.documents import Document
+    from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+    # --------------------------------------------------------
+    # VALIDATION
+    # --------------------------------------------------------
+
+    if not file_path:
+        raise ValueError("file_path is required.")
+
+    if not document_id:
+        raise ValueError("document_id is required.")
+
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(file_path)
+
+    path = Path(file_path)
+
+    document_type = path.suffix.lower().lstrip(".")
+
+    supported_formats = {
+        "pdf", "txt", "json", "docx",
+        "csv", "sql", "jpg", "jpeg", "png",
+    }
+
+    if document_type not in supported_formats:
+        raise ValueError(
+            f"Unsupported document format: {document_type}"
+        )
+
+    resolved_filename = filename or path.name
+
+    ingestion_version = str(uuid.uuid4())
+
+    print("=" * 70)
+    print("DOCUMIND AI - MINILM INGESTION")
+    print("=" * 70)
+    print("Filename:", resolved_filename)
+    print("Document ID:", document_id)
+    print("Document type:", document_type)
+    print("Ingestion version:", ingestion_version)
+
+    # --------------------------------------------------------
+    # DOCUMENT EXTRACTION
+    # --------------------------------------------------------
+
+    if document_type == "pdf":
+
+        from langchain_community.document_loaders import PyPDFLoader
+
+        documents = PyPDFLoader(
+            str(path)
+        ).load()
+
+    else:
+
+        from app.rag.document_extractor import extract_document
+
+        extraction_result = extract_document(str(path))
+
+        if not isinstance(extraction_result, dict):
+            raise TypeError(
+                "Document extractor must return a dictionary."
+            )
+
+        extracted_text = extraction_result.get("text", "")
+
+        if not isinstance(extracted_text, str):
+            raise TypeError(
+                "Extracted document text must be a string."
+            )
+
+        if not extracted_text.strip():
+            raise ValueError(
+                "No text could be extracted from the document."
+            )
+
+        documents = [
+            Document(
+                page_content=extracted_text,
+                metadata={
+                    "source": resolved_filename,
+                    "page": 1,
+                },
+            )
+        ]
+
+    if not documents:
+        raise ValueError(
+            "Document extraction returned no content."
+        )
+
+    # --------------------------------------------------------
+    # CHUNKING
+    # --------------------------------------------------------
+
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=CHUNK_SIZE,
+        chunk_overlap=CHUNK_OVERLAP,
+        separators=[
+            "\n\n",
+            "\n",
+            ". ",
+            " ",
+            "",
+        ],
+    )
+
+    chunks = text_splitter.split_documents(
+        documents
+    )
+
+    if not chunks:
+        raise ValueError(
+            "No document chunks were generated."
+        )
+
+    texts = []
+    metadata = []
+
+    for index, chunk in enumerate(chunks):
+
+        text = chunk.page_content.strip()
+
+        if not text:
+            continue
+
+        texts.append(text)
+
+        item_metadata = dict(
+            chunk.metadata
+        )
+
+        item_metadata.update({
+            "document_id": document_id,
+            "filename": resolved_filename,
+            "document_type": document_type,
+            "chunk_id": f"{document_id}_chunk_{index}",
+            "page": item_metadata.get("page", 1),
+            "text": text,
+        })
+
+        metadata.append(item_metadata)
+
+    if not texts:
+        raise ValueError(
+            "No non-empty chunks available for embedding."
+        )
+
+    # --------------------------------------------------------
+    # MINILM EMBEDDINGS
+    # --------------------------------------------------------
+
+    print(
+        f"Generating MiniLM embeddings for {len(texts)} chunks..."
+    )
+
+    embeddings = embed_documents_minilm(
+        texts
+    )
+
+    # --------------------------------------------------------
+    # QDRANT UPSERT
+    # --------------------------------------------------------
+
+    stored_chunks = upsert_chunks_minilm(
+        embeddings=embeddings,
+        metadata=metadata,
+        document_id=document_id,
+        filename=resolved_filename,
+        document_type=document_type,
+        ingestion_version=ingestion_version,
+    )
+
+    # --------------------------------------------------------
+    # RESULT
+    # --------------------------------------------------------
+
+    result = {
+        "document_id": document_id,
+        "filename": resolved_filename,
+        "document_type": document_type,
+        "pages": len(documents),
+        "chunks": stored_chunks,
+        "ingestion_version": ingestion_version,
+        "embedding_model": "MiniLM",
+        "vector_dimension": 384,
+        "collection": "documind_minilm_384",
+    }
+
+    print("=" * 70)
+    print("MINILM INGESTION COMPLETED")
+    print("Pages:", result["pages"])
+    print("Chunks:", result["chunks"])
+    print("Vector dimension:", result["vector_dimension"])
+    print("=" * 70)
+
+    return result

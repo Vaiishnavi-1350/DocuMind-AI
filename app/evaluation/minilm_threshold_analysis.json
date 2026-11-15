@@ -1,0 +1,439 @@
+{
+    "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+    "retrieval_method": "dense",
+    "gemini_api_calls": 0,
+    "positive_question_count": 10,
+    "negative_question_count": 10,
+    "positive_summary": {
+        "precision@5": 0.19999999999999998,
+        "recall@5": 1.0,
+        "mrr": 0.6033333333333333,
+        "hit_rate@5": 1.0
+    },
+    "positive_results": [
+        {
+            "id": "ALG001",
+            "question": "If x + y = 12 and xy = 32, find the value of x^2 + y^2.",
+            "retrieved_ids": [
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_6",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_7",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_1",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_9",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_3",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_5",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_13",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_11",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_12",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_15"
+            ],
+            "relevant_ids": [
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_1"
+            ],
+            "best_score": 0.44328994,
+            "metrics": {
+                "precision@5": 0.2,
+                "recall@5": 1.0,
+                "reciprocal_rank": 0.3333333333333333
+            },
+            "relevant_rank": 3
+        },
+        {
+            "id": "ALG002",
+            "question": "If a + b + c = 9 and ab + bc + ca = 40, find a^2 + b^2 + c^2.",
+            "retrieved_ids": [
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_6",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_5",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_4",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_15",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_1",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_18",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_9",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_7",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_13",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_19"
+            ],
+            "relevant_ids": [
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_5"
+            ],
+            "best_score": 0.5921735,
+            "metrics": {
+                "precision@5": 0.2,
+                "recall@5": 1.0,
+                "reciprocal_rank": 0.5
+            },
+            "relevant_rank": 2
+        },
+        {
+            "id": "ALG003",
+            "question": "If x + y = 12 and xy = 27, find x^3 + y^3.",
+            "retrieved_ids": [
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_7",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_9",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_6",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_11",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_8",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_3",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_1",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_13",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_12",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_5"
+            ],
+            "relevant_ids": [
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_7"
+            ],
+            "best_score": 0.5053495,
+            "metrics": {
+                "precision@5": 0.2,
+                "recall@5": 1.0,
+                "reciprocal_rank": 1.0
+            },
+            "relevant_rank": 1
+        },
+        {
+            "id": "ALG004",
+            "question": "If a + b = 10 and ab = 21, find a^3 + b^3.",
+            "retrieved_ids": [
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_6",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_9",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_8",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_5",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_13",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_15",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_4",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_7",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_10",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_3"
+            ],
+            "relevant_ids": [
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_9"
+            ],
+            "best_score": 0.50155956,
+            "metrics": {
+                "precision@5": 0.2,
+                "recall@5": 1.0,
+                "reciprocal_rank": 0.5
+            },
+            "relevant_rank": 2
+        },
+        {
+            "id": "ALG005",
+            "question": "Simplify the product (x^3 + 1)(x^6 - x^3 + 1).",
+            "retrieved_ids": [
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_14",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_13",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_4",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_8",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_12",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_0",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_21",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_10",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_7",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_11"
+            ],
+            "relevant_ids": [
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_12"
+            ],
+            "best_score": 0.49323332,
+            "metrics": {
+                "precision@5": 0.2,
+                "recall@5": 1.0,
+                "reciprocal_rank": 0.2
+            },
+            "relevant_rank": 5
+        },
+        {
+            "id": "RES001",
+            "question": "Which programming languages are listed in the resume?",
+            "retrieved_ids": [
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_0",
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_1"
+            ],
+            "relevant_ids": [
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_1"
+            ],
+            "best_score": 0.32257834,
+            "metrics": {
+                "precision@5": 0.2,
+                "recall@5": 1.0,
+                "reciprocal_rank": 0.5
+            },
+            "relevant_rank": 2
+        },
+        {
+            "id": "RES002",
+            "question": "What AI-related project experience is described in the resume?",
+            "retrieved_ids": [
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_0",
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_1"
+            ],
+            "relevant_ids": [
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_0"
+            ],
+            "best_score": 0.6201076,
+            "metrics": {
+                "precision@5": 0.2,
+                "recall@5": 1.0,
+                "reciprocal_rank": 1.0
+            },
+            "relevant_rank": 1
+        },
+        {
+            "id": "RES003",
+            "question": "Which university is mentioned in the education section?",
+            "retrieved_ids": [
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_1",
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_0"
+            ],
+            "relevant_ids": [
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_1"
+            ],
+            "best_score": 0.07883817,
+            "metrics": {
+                "precision@5": 0.2,
+                "recall@5": 1.0,
+                "reciprocal_rank": 1.0
+            },
+            "relevant_rank": 1
+        },
+        {
+            "id": "RES004",
+            "question": "Which tools and platforms are listed in the resume?",
+            "retrieved_ids": [
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_0",
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_1"
+            ],
+            "relevant_ids": [
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_1"
+            ],
+            "best_score": 0.38271728,
+            "metrics": {
+                "precision@5": 0.2,
+                "recall@5": 1.0,
+                "reciprocal_rank": 0.5
+            },
+            "relevant_rank": 2
+        },
+        {
+            "id": "RES005",
+            "question": "What hackathon experience is mentioned in the resume?",
+            "retrieved_ids": [
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_0",
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_1"
+            ],
+            "relevant_ids": [
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_1"
+            ],
+            "best_score": 0.56257296,
+            "metrics": {
+                "precision@5": 0.2,
+                "recall@5": 1.0,
+                "reciprocal_rank": 0.5
+            },
+            "relevant_rank": 2
+        }
+    ],
+    "negative_results": [
+        {
+            "id": "NEG001",
+            "question": "What is blockchain technology and how does cryptocurrency mining work?",
+            "document_id": "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff",
+            "retrieved_ids": [
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_10",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_0",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_6",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_14",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_13",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_5",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_20",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_12",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_7",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_21"
+            ],
+            "best_score": 0.059806045
+        },
+        {
+            "id": "NEG002",
+            "question": "Explain the working principle of a convolutional neural network.",
+            "document_id": "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff",
+            "retrieved_ids": [
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_1",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_3",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_10",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_21",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_11",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_7",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_6",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_14",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_12",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_4"
+            ],
+            "best_score": 0.09969316
+        },
+        {
+            "id": "NEG003",
+            "question": "What are the causes and symptoms of diabetes?",
+            "document_id": "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff",
+            "retrieved_ids": [
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_21",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_2",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_19",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_16",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_9",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_20",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_17",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_8",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_15",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_3"
+            ],
+            "best_score": 0.08438808
+        },
+        {
+            "id": "NEG004",
+            "question": "Describe the history of the Indian independence movement.",
+            "document_id": "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff",
+            "retrieved_ids": [
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_0",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_9",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_1",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_8",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_2",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_12",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_19",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_16",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_3",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_4"
+            ],
+            "best_score": 0.15691923
+        },
+        {
+            "id": "NEG005",
+            "question": "How does photosynthesis convert sunlight into chemical energy?",
+            "document_id": "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff",
+            "retrieved_ids": [
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_19",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_21",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_17",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_20",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_16",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_10",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_12",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_14",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_0",
+                "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff_chunk_18"
+            ],
+            "best_score": 0.15296762
+        },
+        {
+            "id": "NEG006",
+            "question": "Explain how nuclear fission generates electricity.",
+            "document_id": "5eef3dfe-5876-4953-8688-091ced07d933",
+            "retrieved_ids": [
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_1",
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_0"
+            ],
+            "best_score": 0.052568458
+        },
+        {
+            "id": "NEG007",
+            "question": "What is the process of DNA replication in human cells?",
+            "document_id": "5eef3dfe-5876-4953-8688-091ced07d933",
+            "retrieved_ids": [
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_1",
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_0"
+            ],
+            "best_score": 0.047885343
+        },
+        {
+            "id": "NEG008",
+            "question": "Compare the features of different types of cloud computing databases.",
+            "document_id": "5eef3dfe-5876-4953-8688-091ced07d933",
+            "retrieved_ids": [
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_0",
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_1"
+            ],
+            "best_score": 0.13989906
+        },
+        {
+            "id": "NEG009",
+            "question": "What are the major events of World War II?",
+            "document_id": "5eef3dfe-5876-4953-8688-091ced07d933",
+            "retrieved_ids": [
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_0",
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_1"
+            ],
+            "best_score": 0.028641809
+        },
+        {
+            "id": "NEG010",
+            "question": "Explain the chemical reactions involved in acid rain formation.",
+            "document_id": "5eef3dfe-5876-4953-8688-091ced07d933",
+            "retrieved_ids": [
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_1",
+                "5eef3dfe-5876-4953-8688-091ced07d933_chunk_0"
+            ],
+            "best_score": 0.028868064
+        }
+    ],
+    "threshold_analysis": [
+        {
+            "threshold": 0.2,
+            "true_positive": 9,
+            "false_negative": 1,
+            "true_negative": 10,
+            "false_positive": 0,
+            "positive_acceptance_rate": 0.9,
+            "false_rejection_rate": 0.1,
+            "negative_rejection_rate": 1.0,
+            "false_acceptance_rate": 0.0,
+            "balanced_accuracy": 0.95
+        },
+        {
+            "threshold": 0.25,
+            "true_positive": 9,
+            "false_negative": 1,
+            "true_negative": 10,
+            "false_positive": 0,
+            "positive_acceptance_rate": 0.9,
+            "false_rejection_rate": 0.1,
+            "negative_rejection_rate": 1.0,
+            "false_acceptance_rate": 0.0,
+            "balanced_accuracy": 0.95
+        },
+        {
+            "threshold": 0.3,
+            "true_positive": 9,
+            "false_negative": 1,
+            "true_negative": 10,
+            "false_positive": 0,
+            "positive_acceptance_rate": 0.9,
+            "false_rejection_rate": 0.1,
+            "negative_rejection_rate": 1.0,
+            "false_acceptance_rate": 0.0,
+            "balanced_accuracy": 0.95
+        },
+        {
+            "threshold": 0.35,
+            "true_positive": 8,
+            "false_negative": 2,
+            "true_negative": 10,
+            "false_positive": 0,
+            "positive_acceptance_rate": 0.8,
+            "false_rejection_rate": 0.2,
+            "negative_rejection_rate": 1.0,
+            "false_acceptance_rate": 0.0,
+            "balanced_accuracy": 0.9
+        },
+        {
+            "threshold": 0.4,
+            "true_positive": 7,
+            "false_negative": 3,
+            "true_negative": 10,
+            "false_positive": 0,
+            "positive_acceptance_rate": 0.7,
+            "false_rejection_rate": 0.3,
+            "negative_rejection_rate": 1.0,
+            "false_acceptance_rate": 0.0,
+            "balanced_accuracy": 0.85
+        }
+    ]
+}

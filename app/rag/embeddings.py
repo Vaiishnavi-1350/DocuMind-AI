@@ -18,8 +18,11 @@ from __future__ import annotations
 from typing import Any
 
 from FlagEmbedding import BGEM3FlagModel
+from sentence_transformers import SentenceTransformer
 from app.config import (
     BGE_M3_MODEL,
+    MINILM_MODEL,
+    MINILM_VECTOR_SIZE,
 )
 
 # ============================================================
@@ -39,7 +42,49 @@ MAX_LENGTH = 8192
 # ============================================================
 
 _model: BGEM3FlagModel | None = None
+# ============================================================
+# MINILM CONFIGURATION
+# ============================================================
 
+MINILM_BATCH_SIZE = 16
+
+MINILM_MAX_LENGTH = 256
+
+_minilm_model: SentenceTransformer | None = None
+
+
+# ============================================================
+# LOAD MINILM MODEL
+# ============================================================
+
+def get_minilm_model() -> SentenceTransformer:
+    """
+    Load MiniLM only once.
+
+    Uses CPU and lazy loading to avoid
+    loading the model during application startup.
+    """
+
+    global _minilm_model
+
+    if _minilm_model is None:
+
+        print("\n" + "=" * 70)
+        print("DOCUMIND AI - LOADING MINILM")
+        print("=" * 70)
+
+        print(f"Model: {MINILM_MODEL}")
+
+        _minilm_model = SentenceTransformer(
+            MINILM_MODEL,
+            device="cpu",
+        )
+
+        _minilm_model.max_seq_length = MINILM_MAX_LENGTH
+
+        print("MiniLM loaded successfully.")
+
+    return _minilm_model
 
 # ============================================================
 # LOAD MODEL
@@ -78,7 +123,118 @@ def get_bge_model() -> BGEM3FlagModel:
         )
 
     return _model
+# ============================================================
+# MINILM DOCUMENT EMBEDDINGS
+# ============================================================
 
+def embed_documents_minilm(
+    texts: list[str],
+) -> list[list[float]]:
+    """
+    Generate dense-only MiniLM embeddings.
+
+    Returns:
+        list[list[float]]
+
+    Vector dimension:
+        384
+    """
+
+    if not texts:
+        return []
+
+    cleaned_texts = [
+        str(text).strip() if text is not None else ""
+        for text in texts
+    ]
+
+    model = get_minilm_model()
+
+    print(
+        f"Generating MiniLM embeddings "
+        f"for {len(cleaned_texts)} chunks..."
+    )
+
+    embeddings = model.encode(
+        cleaned_texts,
+        batch_size=MINILM_BATCH_SIZE,
+        show_progress_bar=False,
+        convert_to_numpy=True,
+        normalize_embeddings=True,
+    )
+
+    vectors = embeddings.tolist()
+
+    if len(vectors) != len(cleaned_texts):
+        raise RuntimeError(
+            "MiniLM embedding count does not match text count."
+        )
+
+    for vector in vectors:
+        if len(vector) != MINILM_VECTOR_SIZE:
+            raise RuntimeError(
+                f"Expected {MINILM_VECTOR_SIZE} dimensions, "
+                f"received {len(vector)}."
+            )
+
+    print(
+        f"MiniLM embeddings generated: {len(vectors)}"
+    )
+
+    print(
+        f"Vector dimension: {len(vectors[0])}"
+    )
+
+    return vectors
+
+
+# ============================================================
+# MINILM QUERY EMBEDDING
+# ============================================================
+
+def embed_query_minilm(
+    query: str,
+) -> list[float]:
+    """
+    Generate one dense-only MiniLM query embedding.
+
+    Returns:
+        list[float]
+
+    Vector dimension:
+        384
+    """
+
+    if not query or not query.strip():
+        raise ValueError(
+            "Query cannot be empty."
+        )
+
+    model = get_minilm_model()
+
+    print("Generating MiniLM query embedding...")
+
+    embeddings = model.encode(
+        [query.strip()],
+        batch_size=1,
+        show_progress_bar=False,
+        convert_to_numpy=True,
+        normalize_embeddings=True,
+    )
+
+    vector = embeddings[0].tolist()
+
+    if len(vector) != MINILM_VECTOR_SIZE:
+        raise RuntimeError(
+            f"Expected {MINILM_VECTOR_SIZE} dimensions, "
+            f"received {len(vector)}."
+        )
+
+    print(
+        f"MiniLM query dimension: {len(vector)}"
+    )
+
+    return vector
 
 # ============================================================
 # DOCUMENT EMBEDDINGS
