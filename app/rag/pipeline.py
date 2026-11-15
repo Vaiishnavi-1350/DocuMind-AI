@@ -19,8 +19,10 @@
 from __future__ import annotations
 
 from typing import Any
-
-from .retrieval import hybrid_search
+from .retrieval import (
+    hybrid_search,
+    dense_search_minilm,
+)
 from .reranker import rerank_documents
 from .gemini import generate_answer
 
@@ -246,7 +248,7 @@ def _build_sources(
 
                 "retrieval_score": document.get(
                     "rrf_score",
-                    0.0,
+                    document.get("dense_score", 0.0),
                 ),
 
                 "dense_score": document.get(
@@ -381,7 +383,6 @@ def ask_question(
         f"Retrieved candidates: "
         f"{len(retrieved_documents)}"
     )
-    
     # --------------------------------------------------------
     # No retrieval results
     # --------------------------------------------------------
@@ -746,6 +747,204 @@ def ask_question(
     }
     print("\n" + "=" * 70)
     print("RAG PIPELINE COMPLETE")
+    print("=" * 70)
+
+    return result
+
+
+# ============================================================
+# MINILM RAG PIPELINE
+# ============================================================
+
+def ask_question_minilm(
+    question: str,
+    document_id: str,
+    ingestion_version: str,
+    retrieval_limit: int = RETRIEVAL_LIMIT,
+    final_top_k: int = FINAL_TOP_K,
+) -> dict[str, Any]:
+    """
+    Complete MiniLM dense-only RAG pipeline.
+
+    Architecture:
+
+        Question
+            ↓
+        MiniLM Dense Retrieval
+            ↓
+        Cross-Encoder Reranking
+            ↓
+        Relevant Context
+            ↓
+        Gemini
+            ↓
+        Answer + Relevant Sources
+    """
+
+    # ========================================================
+    # VALIDATION
+    # ========================================================
+
+    if not question or not question.strip():
+        raise ValueError("Question cannot be empty.")
+
+    if not document_id or not document_id.strip():
+        raise ValueError("document_id is required.")
+
+    if not ingestion_version or not ingestion_version.strip():
+        raise ValueError("ingestion_version is required.")
+
+    question = question.strip()
+    document_id = document_id.strip()
+    ingestion_version = ingestion_version.strip()
+
+    retrieval_limit = max(1, int(retrieval_limit))
+    final_top_k = max(1, int(final_top_k))
+
+    print("\n" + "=" * 70)
+    print("DOCUMIND AI - MINILM RAG PIPELINE")
+    print("=" * 70)
+
+    print(f"Document ID       : {document_id}")
+    print(f"Ingestion Version : {ingestion_version}")
+    print(f"Question          : {question}")
+    print(f"Retrieval         : top {retrieval_limit}")
+    print(f"Final             : top {final_top_k}")
+
+    # ========================================================
+    # STEP 1 - MINILM DENSE RETRIEVAL
+    # ========================================================
+
+    print("\n[1/4] MiniLM dense retrieval...")
+
+    retrieved_documents = dense_search_minilm(
+        query=question,
+        document_id=document_id,
+        ingestion_version=ingestion_version,
+        retrieval_limit=retrieval_limit,
+    )
+
+    print(
+        f"Retrieved candidates: "
+        f"{len(retrieved_documents)}"
+    )
+
+    # --------------------------------------------------------
+    # No retrieval results
+    # --------------------------------------------------------
+
+    if not retrieved_documents:
+
+        print("No MiniLM document chunks retrieved.")
+        print("Using General Knowledge fallback.")
+
+        answer = generate_answer(
+            question=question,
+            documents=[],
+        )
+
+        return {
+            "answer": answer,
+            "answer_type": GENERAL_KNOWLEDGE_ANSWER_TYPE,
+            "sources": [],
+            "document_id": document_id,
+            "retrieved_count": 0,
+            "context_count": 0,
+        }
+
+        # ========================================================
+    # STEP 2 - DIRECT TOP-K CONTEXT SELECTION
+    # ========================================================
+
+    print("\n[2/4] Selecting top retrieved MiniLM chunks...")
+
+    context_documents = retrieved_documents[:final_top_k]
+
+    print(
+        f"Final context chunks: "
+        f"{len(context_documents)}"
+    )
+
+    if not context_documents:
+        print("No usable document chunks found.")
+
+        return {
+            "answer": NOT_FOUND_MESSAGE,
+            "answer_type": DOCUMENT_ANSWER_TYPE,
+            "sources": [],
+            "document_id": document_id,
+            "retrieved_count": len(retrieved_documents),
+            "context_count": 0,
+        }
+    # ========================================================
+    # STEP 3 - GEMINI
+    # ========================================================
+
+    print("\n[3/4] Generating grounded Gemini answer...")
+
+    answer = generate_answer(
+        question=question,
+        documents=context_documents,
+    )
+
+    if answer is None:
+        raise RuntimeError("Gemini returned no answer.")
+
+    answer = str(answer).strip()
+
+    if not answer:
+        raise RuntimeError("Gemini returned an empty answer.")
+
+    # --------------------------------------------------------
+    # No-source fallback
+    # --------------------------------------------------------
+
+    if answer.lower().rstrip(".") == (
+        NOT_FOUND_MESSAGE.lower().rstrip(".")
+    ):
+
+        print("Document context was insufficient.")
+        print("Using General Knowledge fallback.")
+
+        answer = generate_answer(
+            question=question,
+            documents=[],
+        )
+
+        return {
+            "answer": answer,
+            "answer_type": GENERAL_KNOWLEDGE_ANSWER_TYPE,
+            "sources": [],
+            "document_id": document_id,
+            "retrieved_count": len(retrieved_documents),
+            "context_count": len(reranked_documents),
+        }
+
+    # ========================================================
+    # STEP 4 - SOURCE PREPARATION
+    # ========================================================
+
+    print("\n[4/4] Preparing MiniLM sources...")
+
+    sources = _build_sources(context_documents)
+
+    print(f"Displayed sources: {len(sources)}")
+
+    # ========================================================
+    # FINAL RESPONSE
+    # ========================================================
+
+    result = {
+        "answer": answer,
+        "answer_type": DOCUMENT_ANSWER_TYPE,
+        "sources": sources,
+        "document_id": document_id,
+        "retrieved_count": len(retrieved_documents),
+        "context_count": len(reranked_documents),
+    }
+
+    print("\n" + "=" * 70)
+    print("MINILM RAG PIPELINE COMPLETE")
     print("=" * 70)
 
     return result

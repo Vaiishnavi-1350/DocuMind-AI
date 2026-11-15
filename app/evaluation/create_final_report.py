@@ -18,36 +18,24 @@ REPORTS_DIR = BASE_DIR / "reports"
 SOURCE_FILES = {
     "retrieval_baseline": "retrieval_evaluation_baseline.json",
     "retrieval_report": "retrieval_evaluation_report.json",
+    "minilm_retrieval": "minilm_evaluation_results.json",
     "reranking_comparison": "reranking_comparison.json",
     "context_evaluation": "context_evaluation_report.json",
     "context_size_experiment": "context_size_experiment.json",
     "answer_evaluation": "answer_evaluation_report.json",
 }
-
-
 def load_report(filename):
-    path = REPORTS_DIR / filename
+    path = BASE_DIR / filename if filename == "minilm_evaluation_results.json" else REPORTS_DIR / filename
 
     if not path.exists():
-        return {
-            "available": False,
-            "error": f"Report not found: {filename}",
-        }
+        return {"available": False, "error": f"Report not found: {filename}"}
 
     try:
         with path.open("r", encoding="utf-8") as file:
             data = json.load(file)
-
-        return {
-            "available": True,
-            "data": data,
-        }
-
+        return {"available": True, "data": data}
     except (json.JSONDecodeError, OSError) as exc:
-        return {
-            "available": False,
-            "error": str(exc),
-        }
+        return {"available": False, "error": str(exc)}
 
 
 def main():
@@ -63,12 +51,19 @@ def main():
         return {}
 
     retrieval = get_data("retrieval_baseline")
+    retrieval_report = get_data("retrieval_report")
+    minilm = get_data("minilm_retrieval")
+
     reranking = get_data("reranking_comparison")
     context = get_data("context_evaluation")
     context_size = get_data("context_size_experiment")
     answers = get_data("answer_evaluation")
 
     retrieval_summary = retrieval.get("summary", {})
+    retrieval_report_summary = retrieval_report.get(
+    "aggregate_metrics", {}
+    )
+    minilm_summary = minilm.get("summary", {})
     context_summary = context.get("summary", {})
     answer_summary = answers.get("summary", {})
 
@@ -87,22 +82,37 @@ def main():
         },
         "evaluation_summary": {
             "benchmark_questions": 10,
+
             "retrieval_baseline": {
                 "source": SOURCE_FILES["retrieval_baseline"],
                 "data": retrieval_summary,
             },
+
+            "bge_retrieval_report": {
+                "source": SOURCE_FILES["retrieval_report"],
+                "data": retrieval_report_summary,
+            },
+
+            "minilm_retrieval": {
+                "source": SOURCE_FILES["minilm_retrieval"],
+                "data": minilm_summary,
+            },
+
             "reranking_comparison": {
                 "source": SOURCE_FILES["reranking_comparison"],
                 "data": reranking.get("summary", {}),
             },
+
             "context_evaluation": {
                 "source": SOURCE_FILES["context_evaluation"],
                 "data": context_summary,
             },
+
             "context_size_experiment": {
                 "source": SOURCE_FILES["context_size_experiment"],
                 "data": context_size.get("summary", {}),
             },
+
             "offline_answer_evaluation": {
                 "source": SOURCE_FILES["answer_evaluation"],
                 "data": answer_summary,

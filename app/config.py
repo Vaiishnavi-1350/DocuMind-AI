@@ -88,10 +88,18 @@ QDRANT_URL = os.getenv(
 
 QDRANT_API_KEY = os.getenv("QDRANT_API_KEY") or None
 
+# Existing BGE-M3 collection (preserved)
 QDRANT_COLLECTION_NAME = os.getenv(
     "QDRANT_COLLECTION_NAME",
     "documind_bge_m3"
 )
+
+# New MiniLM collection (separate 384-dimensional vectors)
+MINILM_QDRANT_COLLECTION_NAME = os.getenv(
+    "MINILM_QDRANT_COLLECTION_NAME",
+    "documind_minilm_384"
+)
+
 QDRANT_UPSERT_BATCH_SIZE = int(
     os.getenv(
         "QDRANT_UPSERT_BATCH_SIZE",
@@ -100,14 +108,22 @@ QDRANT_UPSERT_BATCH_SIZE = int(
 )
 
 # ============================================================
-# EMBEDDING MODEL
+# EMBEDDING MODELS
 # ============================================================
 
+# Existing BGE-M3 model (preserved for rollback)
 BGE_M3_MODEL = os.getenv(
     "BGE_M3_MODEL",
     "BAAI/bge-m3"
 )
 
+# New lightweight MiniLM embedding model
+MINILM_MODEL = os.getenv(
+    "MINILM_MODEL",
+    "sentence-transformers/all-MiniLM-L6-v2"
+)
+
+MINILM_VECTOR_SIZE = 384
 
 # ============================================================
 # RERANKER

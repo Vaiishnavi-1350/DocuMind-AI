@@ -26,12 +26,15 @@ from qdrant_client.models import (
     Filter,
     FieldCondition,
     MatchValue,
+    PayloadSchemaType,
 )
 from app.config import (
     QDRANT_URL,
     QDRANT_API_KEY,
     QDRANT_COLLECTION_NAME,
     QDRANT_UPSERT_BATCH_SIZE,
+    MINILM_QDRANT_COLLECTION_NAME,
+    MINILM_VECTOR_SIZE,
 )
 
 # ============================================================
@@ -101,6 +104,58 @@ def create_collection() -> None:
         f"{COLLECTION_NAME}"
     )
 
+# ============================================================
+# CREATE MINILM COLLECTION
+# ============================================================
+
+def create_minilm_collection() -> None:
+    """
+    Create the MiniLM collection if missing and ensure
+    required payload indexes exist.
+
+    Dense only:
+        384 dimensions
+        cosine similarity
+
+    Does not modify the BGE-M3 collection.
+    """
+
+    if not client.collection_exists(
+        MINILM_QDRANT_COLLECTION_NAME
+    ):
+        client.create_collection(
+            collection_name=MINILM_QDRANT_COLLECTION_NAME,
+            vectors_config={
+                "dense": VectorParams(
+                    size=MINILM_VECTOR_SIZE,
+                    distance=Distance.COSINE,
+                )
+            },
+        )
+
+        print(
+            "Created MiniLM Qdrant collection: "
+            f"{MINILM_QDRANT_COLLECTION_NAME}"
+        )
+
+    # --------------------------------------------------------
+    # Ensure document filtering indexes
+    # --------------------------------------------------------
+
+    for field_name in (
+        "document_id",
+        "ingestion_version",
+    ):
+        client.create_payload_index(
+            collection_name=MINILM_QDRANT_COLLECTION_NAME,
+            field_name=field_name,
+            field_schema=PayloadSchemaType.KEYWORD,
+            wait=True,
+        )
+
+        print(
+            f"MiniLM payload index ready: {field_name}"
+        )
 
 # ============================================================
 # COMPATIBILITY ALIAS
@@ -202,7 +257,7 @@ def build_document_version_filter(
         ]
     )
 # ============================================================
-# DELETE DOCUMENT
+# DELETE DOCUMENT FROM ALL COLLECTIONS
 # ============================================================
 
 def delete_document(
@@ -212,25 +267,43 @@ def delete_document(
     if not document_id:
         return
 
-    if not client.collection_exists(
-        COLLECTION_NAME
+    # --------------------------------------------------------
+    # DELETE BGE-M3 VECTORS
+    # --------------------------------------------------------
+
+    if client.collection_exists(COLLECTION_NAME):
+
+        client.delete(
+            collection_name=COLLECTION_NAME,
+            points_selector=build_document_filter(
+                document_id
+            ),
+            wait=True,
+        )
+
+        print(
+            f"Deleted BGE-M3 chunks: {document_id}"
+        )
+
+    # --------------------------------------------------------
+    # DELETE MINILM VECTORS
+    # --------------------------------------------------------
+
+    if client.collection_exists(
+        MINILM_QDRANT_COLLECTION_NAME
     ):
-        return
 
-    client.delete(
+        client.delete(
+            collection_name=MINILM_QDRANT_COLLECTION_NAME,
+            points_selector=build_document_filter(
+                document_id
+            ),
+            wait=True,
+        )
 
-        collection_name=COLLECTION_NAME,
-
-        points_selector=build_document_filter(
-            document_id
-        ),
-    )
-
-    print(
-        f"Deleted Qdrant chunks for document: "
-        f"{document_id}"
-    )
-
+        print(
+            f"Deleted MiniLM chunks: {document_id}"
+        )
 # ============================================================
 # DELETE DOCUMENT VERSION
 # ============================================================
@@ -654,6 +727,165 @@ def upsert_chunks(
     return len(points)
 
 # ============================================================
+# MINILM UPSERT CHUNKS
+# ============================================================
+
+def upsert_chunks_minilm(
+    embeddings: list[list[float]],
+    metadata: list[dict[str, Any]],
+    document_id: str | None = None,
+    filename: str = "",
+    document_type: str = "pdf",
+    ingestion_version: str | None = None,
+) -> int:
+    """
+    Store MiniLM dense-only embeddings in its
+    separate 384-dimensional Qdrant collection.
+    """
+
+    if not embeddings:
+        return 0
+
+    if not metadata:
+        raise ValueError("Metadata cannot be empty.")
+
+    if len(embeddings) != len(metadata):
+        raise ValueError(
+            "MiniLM embeddings and metadata "
+            "must contain the same number of items."
+        )
+
+    resolved_document_id = (
+        document_id
+        or metadata[0].get("document_id")
+    )
+
+    if not resolved_document_id:
+        raise ValueError("document_id is required.")
+
+    resolved_ingestion_version = (
+        ingestion_version or str(uuid.uuid4())
+    )
+
+    # --------------------------------------------------------
+    # VALIDATE VECTORS
+    # --------------------------------------------------------
+
+    for index, vector in enumerate(embeddings):
+
+        if len(vector) != MINILM_VECTOR_SIZE:
+            raise ValueError(
+                f"Invalid MiniLM vector dimension at "
+                f"chunk {index}: expected "
+                f"{MINILM_VECTOR_SIZE}, received {len(vector)}."
+            )
+
+    # --------------------------------------------------------
+    # CREATE MINI LM COLLECTION
+    # --------------------------------------------------------
+
+    create_minilm_collection()
+
+    # --------------------------------------------------------
+    # BUILD POINTS
+    # --------------------------------------------------------
+
+    points: list[PointStruct] = []
+
+    for index, dense_vector in enumerate(embeddings):
+
+        item_metadata = dict(metadata[index])
+
+        current_document_id = (
+            item_metadata.get("document_id")
+            or resolved_document_id
+        )
+
+        if not current_document_id:
+            raise ValueError(
+                f"document_id is missing for chunk {index}."
+            )
+
+        text = str(item_metadata.get("text", ""))
+
+        current_filename = (
+            item_metadata.get("filename")
+            or filename
+            or ""
+        )
+
+        current_document_type = (
+            item_metadata.get("document_type")
+            or document_type
+        )
+
+        chunk_id = item_metadata.get("chunk_id")
+
+        if chunk_id is None:
+            chunk_id = (
+                f"{current_document_id}_chunk_{index}"
+            )
+
+        page = item_metadata.get("page")
+
+        payload = dict(item_metadata)
+
+        payload.update({
+            "text": text,
+            "document_id": current_document_id,
+            "filename": current_filename,
+            "document_type": current_document_type,
+            "chunk_id": chunk_id,
+            "page": page,
+            "ingestion_version": resolved_ingestion_version,
+        })
+
+        point = PointStruct(
+            id=str(uuid.uuid4()),
+            vector={
+                "dense": dense_vector,
+            },
+            payload=payload,
+        )
+
+        points.append(point)
+
+    # --------------------------------------------------------
+    # BATCH UPSERT
+    # --------------------------------------------------------
+
+    print(
+        f"Storing {len(points)} MiniLM chunks in Qdrant..."
+    )
+
+    for start in range(
+        0,
+        len(points),
+        UPSERT_BATCH_SIZE,
+    ):
+
+        batch = points[
+            start:start + UPSERT_BATCH_SIZE
+        ]
+
+        client.upsert(
+            collection_name=MINILM_QDRANT_COLLECTION_NAME,
+            points=batch,
+            wait=True,
+        )
+
+        print(
+            f"Upserted MiniLM chunks "
+            f"{start + 1} to {start + len(batch)}"
+        )
+
+    print(
+        f"MiniLM upsert completed: {len(points)} chunks."
+    )
+
+    return len(points)
+
+# ============================================================
 # DENSE SEARCH
 # ============================================================
 
@@ -692,7 +924,58 @@ def search_dense(
     )
 
     return results.points
+# ============================================================
+# MINILM DENSE SEARCH
+# ============================================================
 
+def search_dense_minilm(
+    query_vector: list[float],
+    limit: int = 10,
+    document_id: str | None = None,
+    ingestion_version: str | None = None,
+):
+    """
+    Search MiniLM dense vectors.
+
+    Uses the separate 384-dimensional collection.
+    Supports document and ingestion-version filtering.
+    """
+
+    if len(query_vector) != MINILM_VECTOR_SIZE:
+        raise ValueError(
+            f"Expected {MINILM_VECTOR_SIZE}-dimensional query vector."
+        )
+
+    if not document_id:
+        raise ValueError(
+            "document_id is required for MiniLM search."
+        )
+
+    if not client.collection_exists(
+        MINILM_QDRANT_COLLECTION_NAME
+    ):
+        return []
+
+    query_filter = build_document_filter(
+        document_id
+    )
+
+    if ingestion_version:
+        query_filter = build_document_version_filter(
+            document_id,
+            ingestion_version,
+        )
+
+    results = client.query_points(
+        collection_name=MINILM_QDRANT_COLLECTION_NAME,
+        query=query_vector,
+        using="dense",
+        query_filter=query_filter,
+        limit=limit,
+        with_payload=True,
+    )
+
+    return results.points
 
 # ============================================================
 # SPARSE SEARCH

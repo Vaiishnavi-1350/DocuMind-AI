@@ -1,0 +1,72 @@
+[
+  {
+    "id": "NEG001",
+    "document_name": "Algebraic Identities.pdf",
+    "document_id": "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff",
+    "question": "What is blockchain technology and how does cryptocurrency mining work?",
+    "expected": "irrelevant"
+  },
+  {
+    "id": "NEG002",
+    "document_name": "Algebraic Identities.pdf",
+    "document_id": "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff",
+    "question": "Explain the working principle of a convolutional neural network.",
+    "expected": "irrelevant"
+  },
+  {
+    "id": "NEG003",
+    "document_name": "Algebraic Identities.pdf",
+    "document_id": "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff",
+    "question": "What are the causes and symptoms of diabetes?",
+    "expected": "irrelevant"
+  },
+  {
+    "id": "NEG004",
+    "document_name": "Algebraic Identities.pdf",
+    "document_id": "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff",
+    "question": "Describe the history of the Indian independence movement.",
+    "expected": "irrelevant"
+  },
+  {
+    "id": "NEG005",
+    "document_name": "Algebraic Identities.pdf",
+    "document_id": "f2dca717-9eee-4c7e-97c8-2c21fed0b7ff",
+    "question": "How does photosynthesis convert sunlight into chemical energy?",
+    "expected": "irrelevant"
+  },
+  {
+    "id": "NEG006",
+    "document_name": "Resume 1.pdf",
+    "document_id": "5eef3dfe-5876-4953-8688-091ced07d933",
+    "question": "Explain how nuclear fission generates electricity.",
+    "expected": "irrelevant"
+  },
+  {
+    "id": "NEG007",
+    "document_name": "Resume 1.pdf",
+    "document_id": "5eef3dfe-5876-4953-8688-091ced07d933",
+    "question": "What is the process of DNA replication in human cells?",
+    "expected": "irrelevant"
+  },
+  {
+    "id": "NEG008",
+    "document_name": "Resume 1.pdf",
+    "document_id": "5eef3dfe-5876-4953-8688-091ced07d933",
+    "question": "Compare the features of different types of cloud computing databases.",
+    "expected": "irrelevant"
+  },
+  {
+    "id": "NEG009",
+    "document_name": "Resume 1.pdf",
+    "document_id": "5eef3dfe-5876-4953-8688-091ced07d933",
+    "question": "What are the major events of World War II?",
+    "expected": "irrelevant"
+  },
+  {
+    "id": "NEG010",
+    "document_name": "Resume 1.pdf",
+    "document_id": "5eef3dfe-5876-4953-8688-091ced07d933",
+    "question": "Explain the chemical reactions involved in acid rain formation.",
+    "expected": "irrelevant"
+  }
+]

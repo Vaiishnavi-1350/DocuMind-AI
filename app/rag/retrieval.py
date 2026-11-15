@@ -14,14 +14,332 @@ from typing import Any
 
 from .embeddings import (
     embed_query,
+    embed_query_minilm,
 )
 
 from .qdrant import (
     search_dense,
     search_sparse,
+    search_dense_minilm,
 )
 
+# ============================================================
+# QDRANT POINT → DOCUMENT
+# ============================================================
 
+def _point_to_document(
+    point: Any,
+) -> dict:
+
+    payload = (
+        point.payload
+        or {}
+    )
+
+    return {
+        "text": payload.get(
+            "text",
+            "",
+        ),
+
+        "document_id": payload.get(
+            "document_id"
+        ),
+
+        "filename": payload.get(
+            "filename",
+            "",
+        ),
+
+        "page": payload.get(
+            "page"
+        ),
+
+        "chunk_id": payload.get(
+            "chunk_id"
+        ),
+
+        "score": float(
+            point.score
+            or 0.0
+        ),
+
+        "metadata": payload,
+    }
+
+
+# ============================================================
+# RECIPROCAL RANK FUSION
+# ============================================================
+
+def _rrf_merge(
+    dense_results: list[Any],
+    sparse_results: list[Any],
+    top_k: int = 10,
+    rrf_k: int = 60,
+) -> list[dict]:
+    """
+    Combine dense and sparse retrieval results
+    using Reciprocal Rank Fusion.
+
+    RRF score:
+
+        1 / (k + rank)
+    """
+
+    merged: dict[str, dict] = {}
+
+    # --------------------------------------------------------
+    # Create stable chunk key
+    # --------------------------------------------------------
+
+    def get_key(
+        point: Any,
+    ) -> str:
+
+        payload = (
+            point.payload
+            or {}
+        )
+
+        chunk_id = payload.get(
+            "chunk_id"
+        )
+
+        if chunk_id is not None:
+            return str(
+                chunk_id
+            )
+
+        text = payload.get(
+            "text",
+            "",
+        )
+
+        return text[:500]
+
+    # --------------------------------------------------------
+    # Dense results
+    # --------------------------------------------------------
+
+    for rank, point in enumerate(
+        dense_results,
+        start=1,
+    ):
+
+        key = get_key(
+            point
+        )
+
+        if key not in merged:
+
+            merged[key] = (
+                _point_to_document(
+                    point
+                )
+            )
+
+            merged[key][
+                "dense_score"
+            ] = float(
+                point.score
+                or 0.0
+            )
+
+            merged[key][
+                "sparse_score"
+            ] = 0.0
+
+            merged[key][
+                "rrf_score"
+            ] = 0.0
+
+        merged[key][
+            "rrf_score"
+        ] += (
+            1.0
+            / (
+                rrf_k
+                + rank
+            )
+        )
+
+    # --------------------------------------------------------
+    # Sparse results
+    # --------------------------------------------------------
+
+    for rank, point in enumerate(
+        sparse_results,
+        start=1,
+    ):
+
+        key = get_key(
+            point
+        )
+
+        if key not in merged:
+
+            merged[key] = (
+                _point_to_document(
+                    point
+                )
+            )
+
+            merged[key][
+                "dense_score"
+            ] = 0.0
+
+            merged[key][
+                "sparse_score"
+            ] = float(
+                point.score
+                or 0.0
+            )
+
+            merged[key][
+                "rrf_score"
+            ] = 0.0
+
+        else:
+
+            merged[key][
+                "sparse_score"
+            ] = float(
+                point.score
+                or 0.0
+            )
+
+        merged[key][
+            "rrf_score"
+        ] += (
+            1.0
+            / (
+                rrf_k
+                + rank
+            )
+        )
+
+    # --------------------------------------------------------
+    # Sort by RRF
+    # --------------------------------------------------------
+
+    results = list(
+        merged.values()
+    )
+
+    results.sort(
+        key=lambda item:
+            item[
+                "rrf_score"
+            ],
+        reverse=True,
+    )
+
+    return results[
+        :top_k
+    ]
+# ============================================================
+# HYBRID SEARCH
+# ============================================================
+def hybrid_search(
+    query: str,
+    document_id: str,
+    retrieval_limit: int = 10,
+    ingestion_version: str | None = None,
+):
+    """
+    Perform version-aware hybrid retrieval.
+
+    Uses:
+    1. Dense search
+    2. Sparse search
+    3. Reciprocal Rank Fusion (RRF)
+    """
+
+    # Generate query embeddings
+    dense_vector, sparse_vector = embed_query(query)
+
+    # Dense retrieval
+    dense_results = search_dense(
+        query_vector=dense_vector,
+        document_id=document_id,
+        ingestion_version=ingestion_version,
+        limit=retrieval_limit,
+    )
+
+    # Sparse retrieval
+    sparse_results = search_sparse(
+        query_vector=sparse_vector,
+        document_id=document_id,
+        ingestion_version=ingestion_version,
+        limit=retrieval_limit,
+    )
+
+    # Combine results using RRF
+    merged_results = _rrf_merge(
+        dense_results,
+        sparse_results,
+    )
+
+    return merged_results[:retrieval_limit]
+
+# ============================================================
+# MINILM DENSE SEARCH
+# ============================================================
+
+def dense_search_minilm(
+    query: str,
+    document_id: str,
+    retrieval_limit: int = 10,
+    ingestion_version: str | None = None,
+) -> list[dict]:
+    """
+    Perform dense-only retrieval using MiniLM.
+
+    Uses:
+    1. MiniLM query embeddings
+    2. Qdrant dense vector search
+    3. Document-level filtering
+    4. Optional ingestion-version filtering
+    """
+
+    if not query or not query.strip():
+        return []
+
+    if not document_id:
+        raise ValueError(
+            "Document ID is required for MiniLM retrieval."
+        )
+
+    # Generate MiniLM query embedding
+    query_vector = embed_query_minilm(query)
+
+    # Search the separate MiniLM collection
+    search_results = search_dense_minilm(
+        query_vector=query_vector,
+        document_id=document_id,
+        ingestion_version=ingestion_version,
+        limit=retrieval_limit,
+    )
+
+    # Convert Qdrant points into document dictionaries
+    results = []
+
+    for point in search_results:
+
+        document = _point_to_document(point)
+
+        document["dense_score"] = float(
+            point.score or 0.0
+        )
+
+        document["sparse_score"] = 0.0
+
+        document["retrieval_method"] = "minilm_dense"
+
+        results.append(document)
+
+    return results
 # ============================================================
 # QDRANT POINT → DOCUMENT
 # ============================================================

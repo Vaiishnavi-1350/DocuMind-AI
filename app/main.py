@@ -74,11 +74,19 @@ from app.auth.security import (
     create_access_token,
     decode_access_token,
 )
-from app.rag.ingest import ingest_document
+from app.rag.ingest import (
+    ingest_document,
+    ingest_document_minilm,
+)
+
+from app.rag.pipeline import (
+    ask_question,
+    ask_question_minilm,
+)
 from app.rag.qdrant import (
     delete_document as delete_qdrant_document,
+    create_minilm_collection,
 )
-from app.rag.pipeline import ask_question
 from app.rag.document_extractor import SUPPORTED_FORMATS
 
 # ============================================================
@@ -2044,8 +2052,7 @@ async def upload_document(
             file.filename,
         )
 
-        ingestion_result = ingest_document(
-
+        ingestion_result = ingest_document_minilm(
             file_path=file_path,
 
             document_id=document_id,
@@ -2630,7 +2637,7 @@ def chat_with_document(
                 document_id,
                 question,
                 )
-        result = ask_question(
+        result = ask_question_minilm(
             question=question,
             document_id=document_id,
             ingestion_version=document.active_ingestion_version,
@@ -2818,25 +2825,26 @@ def get_chat_history(
 # ============================================================
 # STARTUP LOG
 # ============================================================
-
 @app.on_event("startup")
 def startup_event():
 
-    logger.info(
-        "======================================================"
-    )
+    logger.info("Initializing MiniLM Qdrant collection...")
 
-    logger.info(
-        "DocuMind AI started successfully."
-    )
+    try:
+        create_minilm_collection()
 
-    logger.info(
-        "Version: 2.0.0"
-    )
+        logger.info(
+            "MiniLM Qdrant collection initialized successfully."
+        )
 
-    logger.info(
-        "======================================================"
-    )
+    except Exception:
+        logger.exception(
+            "MiniLM Qdrant initialization failed."
+        )
+        raise
+
+    logger.info("DocuMind AI started successfully.")
+    logger.info("Version: 2.0.0")
 
 # ============================================================
 # SHUTDOWN LOG
