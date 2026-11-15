@@ -378,8 +378,20 @@ loginForm.addEventListener(
                 );
 
 
-            const data =
-                await response.json();
+            const responseText = await response.text();
+            let data = {};
+
+            try {
+                data = responseText ? JSON.parse(responseText) : {};
+            } catch (error) {
+                console.error("Non-JSON login response:", responseText);
+            }
+
+            console.log(
+                "Login response:",
+                response.status,
+                data
+            );
 
 
             console.log(
